@@ -79,7 +79,7 @@ def predictions(dataframe):
     # Add improved useful data
     dataframe['day_week'] = pandas.to_datetime(dataframe['DATEn']).dt.weekday
 
-    features = dataframe[['rain', 'meantempi', 'hour', 'day_week']]
+    features = dataframe[['rain', 'precipi', 'meantempi', 'Hour', 'day_week']]
     dummy_units = pandas.get_dummies(dataframe['UNIT'], prefix='unit')
     features = features.join(dummy_units)
 

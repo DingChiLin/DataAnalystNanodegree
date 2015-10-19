@@ -3,10 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import scipy.stats
 import SGD_regression_test as SGD
-from ggplot import *
 
 path = r'~/Documents/GitHub/DataAnalystNanodegree/test/improved-dataset/turnstile_weather_v2.csv'
-#path = r'~/Documents/GitHub/DataAnalystNanodegree/test/turnstile_data_master_with_weather.csv'
+#path = r'~/Documents/GitHub/DataAnalystNanodegree/turnstile_data_master_with_weather.csv'
 
 turnstile_weather = pd.read_csv(path)
 #enter_rain = turnstile_weather[turnstile_weather.rain == 1]['ENTRIESn_hourly']
@@ -25,19 +24,6 @@ turnstile_weather = pd.read_csv(path)
 
 inter, param, prediction = SGD.predictions(turnstile_weather)
 #SGD.predictions_by_test(turnstile_weather)
-
-origin_data = turnstile_weather['ENTRIESn_hourly']
-#print(values)
-#print(prediction)
-#print(values - prediction)
-
-residual = origin_data.values-prediction
-standardized_residual = residual / residual.std()
-d = {'standardized_residual' : pd.Series(standardized_residual, index=origin_data.index),
-     'prediction' : pd.Series(prediction, index=origin_data.index)}
-df = pd.DataFrame(d)
-
-p = ggplot( df, aes( 'prediction', 'standardized_residual') ) + ggtitle( 'improved data' ) + geom_point( color = "red" )
-print(p)
+print(param)
 
 
