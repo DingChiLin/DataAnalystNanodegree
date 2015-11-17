@@ -1,30 +1,34 @@
-from pandas import DataFrame, Series
-import numpy
+import re
 
-def add5(x):
-  return x+5
+str = '1.5}'
 
-year = Series([2012,2013,2014])
-name = Series(['Arthur','Molly','Stone'])
-wins = Series([7,8,9])
-data = {'year':year,
-        'name':name,
-        'wins':wins}
-d = DataFrame(data)
-print d
-print '1----'
-print d.loc[0]
-print '2----'
-print d[d.wins>7]
-print '3----'
-print d.name[d.wins+d.year>2010]
-print '4----'
-print map(add5, d.wins)
-print '5----'
-print d[['year','wins']]
-print len(d.index)
+def is_float(num):
+    try:
+        i = float(num)
+        return i
+    except ValueError:
+        return False
 
+def is_int(num):
+    try:
+        i = int(num)
+        return i
+    except ValueError:
+        return False
 
+print(is_int(str))
+print(is_float(str))
 
-arr = [1,2,3,4,5]
-print arr - 1
+def is_list(data):
+    reg = re.compile(r'{.*}')
+    m = reg.search(data)
+    return False if m == None else True
+
+print(is_list(str))
+
+print(type(1.1))
+
+if 
+if type(1.1) == 'float':
+    print("YES")
+
