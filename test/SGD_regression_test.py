@@ -77,9 +77,22 @@ def predictions(dataframe):
     ##########################################################################################
 
     # Add improved useful data
+    dataframe['ENTRIESn_hourly'] = np.log(dataframe['ENTRIESn_hourly']+1)
+
     dataframe['day_week'] = pandas.to_datetime(dataframe['DATEn']).dt.weekday
 
-    features = dataframe[['rain', 'meantempi', 'hour', 'day_week']]
+    entries_per_hour = dataframe.groupby('hour').mean().reset_index()
+    def weight_for_hour(hour):
+        return float(entries_per_hour[entries_per_hour.hour == hour]['ENTRIESn_hourly'])
+
+    entries_per_weekday = dataframe.groupby('day_week').mean().reset_index()
+    def weight_for_dayweek(day):
+        return float(entries_per_weekday[entries_per_weekday.day_week == day]['ENTRIESn_hourly'])
+
+    dataframe['weighted_hour'] = dataframe['hour'].apply(weight_for_hour)
+    dataframe['weighted_day_week'] = dataframe['day_week'].apply(weight_for_dayweek)
+
+    features = dataframe[['rain', 'weighted_hour', 'weighted_day_week']]
     dummy_units = pandas.get_dummies(dataframe['UNIT'], prefix='unit')
     features = features.join(dummy_units)
 
@@ -107,17 +120,28 @@ def predictions_by_test(dataframe):
 
     dataframe['day_week'] = pandas.to_datetime(dataframe['DATEn']).dt.weekday
 
+    entries_per_hour = dataframe.groupby('hour').mean().reset_index()
+    def weight_for_hour(hour):
+        return float(entries_per_hour[entries_per_hour.hour == hour]['ENTRIESn_hourly'])
+
+    entries_per_weekday = dataframe.groupby('day_week').mean().reset_index()
+    def weight_for_dayweek(day):
+        return float(entries_per_weekday[entries_per_weekday.day_week == day]['ENTRIESn_hourly'])
+
+    dataframe['weighted_hour'] = dataframe['hour'].apply(weight_for_hour)
+    dataframe['weighted_day_week'] = dataframe['day_week'].apply(weight_for_dayweek)
+
     #Separate Data
     rows = random.sample( list(dataframe.index), round(len(dataframe.index)/10) )
     df_test = dataframe.ix[rows]
     df_train = dataframe.drop(rows)
 
     #Choose features
-    features_test = df_test[['rain', 'precipi', 'meantempi', 'hour', 'day_week']]
+    features_test = df_test[['rain', 'weighted_hour', 'weighted_day_week']]
     dummy_units = pandas.get_dummies(df_test['UNIT'], prefix='unit')
     features_test = features_test.join(dummy_units)
 
-    features_train = df_train[['rain', 'precipi', 'meantempi', 'hour', 'day_week']]
+    features_train = df_train[['rain', 'weighted_hour', 'weighted_day_week']]
     dummy_units = pandas.get_dummies(df_train['UNIT'], prefix='unit')
     features_train = features_train.join(dummy_units)
 

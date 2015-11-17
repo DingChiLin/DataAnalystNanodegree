@@ -24,6 +24,7 @@ turnstile_weather = pd.read_csv(path)
 #print(p)
 
 inter, param, prediction = SGD.predictions(turnstile_weather)
+print(param)
 #SGD.predictions_by_test(turnstile_weather)
 
 origin_data = turnstile_weather['ENTRIESn_hourly']
@@ -37,7 +38,7 @@ d = {'standardized_residual' : pd.Series(standardized_residual, index=origin_dat
      'prediction' : pd.Series(prediction, index=origin_data.index)}
 df = pd.DataFrame(d)
 
-p = ggplot( df, aes( 'prediction', 'standardized_residual') ) + ggtitle( 'improved data' ) + geom_point( color = "red" )
+p = ggplot( df, aes( 'prediction', 'standardized_residual') ) + ggtitle( 'standardized_residual vs prediction' ) + geom_point( color = "red" )
 print(p)
 
 
