@@ -10,5 +10,3 @@ def process_map(file_in):
         data[element.tag] += 1
 
     print(data)
-
-process_map('taipei_city_taiwan.osm')
