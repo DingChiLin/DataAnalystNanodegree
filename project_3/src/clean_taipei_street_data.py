@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import pymongo
 from datetime import datetime
 import xml.etree.cElementTree as ET
@@ -12,6 +15,7 @@ db = client.open_street_map
 lower = re.compile(r'^([a-z]|_)*$')
 lower_colon = re.compile(r'^([a-z]|_)*:([a-z]|_)*$')
 problemchars = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
+is_english_name = re.compile(r'^([a-zA-Z0-9,\. ]*)$')
 
 CREATED = [ "version", "changeset", "timestamp", "user", "uid"]
 
@@ -23,14 +27,33 @@ def is_problem_key(key):
         return False
 
 def parse_each_tags_in_element(node, element):
+    if element.tag == 'way':
+        node["node_refs"] = []
+
+    if element.tag == 'relation':
+        node["way_refs"] = []
+
     for child in element:
         if child.tag == 'tag':
-
             if is_problem_key(child.attrib['k']):
                 continue
 
             addr_in_tags(node, child)
             name_in_tags(node, child)
+
+        elif child.tag == 'nd':
+            node["node_refs"].append(child.attrib['ref'])
+
+        elif child.tag == 'member':
+            member = {}
+            if child.attrib['type']:
+                member['type'] = child.attrib['type']
+            if child.attrib['ref']:
+                member['ref'] = child.attrib['ref']
+            if child.attrib['role']:
+                member['role'] = child.attrib['role']
+            node["way_refs"].append(member)
+
 
 def addr_in_tags(node, child):
 
@@ -39,7 +62,6 @@ def addr_in_tags(node, child):
         street_values = m.group().split(":")
         if street_values[0] == 'addr':
             node['address'][street_values[1]] = child.attrib['v']
-
 
 def name_in_tags(node, child):
 
@@ -56,7 +78,24 @@ def name_in_tags(node, child):
             node['name'][name_values[1]] = child.attrib['v']
 
 def is_in_in_tags_in_element(node, element):
-    pass
+    is_english = False
+    have_chinese_is_in_tag = False
+    is_in = ''
+
+    for child in element:
+        if child.tag == 'tag' and child.attrib['k'] == 'is_in:zh':
+            have_chinese_is_in_tag = True
+            is_in = child.attrib['v']
+            node['is_in'] = child.attrib['v']
+
+    if not have_chinese_is_in_tag:
+        for child in element:
+            if child.tag == 'tag' and child.attrib['k'] == 'is_in':
+                is_in = child.attrib['v']
+                node['is_in'] = child.attrib['v']
+
+    if is_in == 'Taipei City, Taiwan':
+        node['is_in'] = '台灣台北市'
 
 def nd_in_element(node, element):
     pass
@@ -90,8 +129,12 @@ def shape_element(element):
         except:
             pass
 
-        #element childs
+        #addr and name
         parse_each_tags_in_element(node, element)
+
+        #is_in
+        is_in_in_tags_in_element(node, element)
+
         #for child in element:
             #if child.tag == 'tag':
 
@@ -138,9 +181,9 @@ def insert(data):
     db.taipei_street.remove()
     db.taipei_street.insert(data)
 
-    result = db.taipei_street.find()
+    result = db.taipei_street.find({'is_in':{"$exists":1}},{'is_in':1})
     for document in result:
         print(document)
 
 
-process_map('taipei_city_taiwan_min.osm')
+process_map('taipei_city_taiwan.osm')
