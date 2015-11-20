@@ -31,7 +31,7 @@ def parse_each_tags_in_element(node, element):
         node["node_refs"] = []
 
     if element.tag == 'relation':
-        node["way_refs"] = []
+        node["member_refs"] = []
 
     for child in element:
         if child.tag == 'tag':
@@ -52,7 +52,7 @@ def parse_each_tags_in_element(node, element):
                 member['ref'] = child.attrib['ref']
             if child.attrib['role']:
                 member['role'] = child.attrib['role']
-            node["way_refs"].append(member)
+            node["member_refs"].append(member)
 
 
 def addr_in_tags(node, child):
