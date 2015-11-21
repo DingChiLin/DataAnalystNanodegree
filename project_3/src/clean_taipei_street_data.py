@@ -14,6 +14,7 @@ db = client.open_street_map
 
 lower = re.compile(r'^([a-z]|_)*$')
 lower_colon = re.compile(r'^([a-z]|_)*:([a-z]|_)*$')
+name_with_colon = re.compile(r'^(\w*):(\w*)$')
 problemchars = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
 is_english_name = re.compile(r'^([a-zA-Z0-9,\. ]*)$')
 
@@ -38,8 +39,26 @@ def parse_each_tags_in_element(node, element):
             if is_problem_key(child.attrib['k']):
                 continue
 
-            addr_in_tags(node, child)
-            name_in_tags(node, child)
+            if child.attrib['k'] == 'name':
+                node['name']['default'] = child.attrib['v']
+                continue
+
+            if child.attrib['k'] == 'is_in':
+                continue
+
+            m = lower_colon.search(child.attrib['k'])
+            if m and m.group():
+                values_in_tags = m.group().split(":")
+                if values_in_tags[0] == 'addr':
+                    node['address'][values_in_tags[1]] = child.attrib['v']
+                    continue
+                elif values_in_tags[0] == 'name':
+                    node['name'][values_in_tags[1]] = child.attrib['v']
+                    continue
+                elif values_in_tags[0] == 'is_in':
+                    continue
+
+            node['others'][child.attrib['k']] = child.attrib['v']
 
         elif child.tag == 'nd':
             node["node_refs"].append(child.attrib['ref'])
@@ -53,29 +72,6 @@ def parse_each_tags_in_element(node, element):
             if child.attrib['role']:
                 member['role'] = child.attrib['role']
             node["member_refs"].append(member)
-
-
-def addr_in_tags(node, child):
-
-    m = lower_colon.search(child.attrib['k'])
-    if m and m.group():
-        street_values = m.group().split(":")
-        if street_values[0] == 'addr':
-            node['address'][street_values[1]] = child.attrib['v']
-
-def name_in_tags(node, child):
-
-    if child.attrib['k'] == 'name':
-        node['name']['default'] = child.attrib['v']
-
-    m = lower_colon.search(child.attrib['k'])
-    if m and m.group():
-        name_values = m.group().split(":")
-        if name_values[0] == 'name':
-            if 'name' not in node.keys():
-                node['name'] = {}
-
-            node['name'][name_values[1]] = child.attrib['v']
 
 def is_in_in_tags_in_element(node, element):
     is_english = False
@@ -129,39 +125,11 @@ def shape_element(element):
         except:
             pass
 
-        #addr and name
+        #addr, name, way, member and others
         parse_each_tags_in_element(node, element)
 
         #is_in
         is_in_in_tags_in_element(node, element)
-
-        #for child in element:
-            #if child.tag == 'tag':
-
-                #m1 = problemchars.search(child.attrib['k'])
-                #if m1 and m1.group():
-                    #continue
-
-                ##address
-                #m2 = lower_colon.search(child.attrib['k'])
-                #if m2 and m2.group():
-                    #street_values = m2.group().split(":")
-                    #if street_values[0] == 'addr':
-                        #if 'address' not in node.keys():
-                            #node['address'] = {}
-
-                        #node['address'][street_values[1]] = child.attrib['v']
-                        #continue
-
-                #node[child.attrib['k']] = child.attrib['v']
-
-                ##name
-
-            #elif child.tag == 'nd':
-                #if 'node_refs' not in node.keys():
-                    #node['node_refs'] = []
-
-                #node["node_refs"].append(child.attrib['ref'])
 
         return node
     else:
@@ -181,7 +149,7 @@ def insert(data):
     db.taipei_street.remove()
     db.taipei_street.insert(data)
 
-    result = db.taipei_street.find({'is_in':{"$exists":1}},{'is_in':1})
+    result = db.taipei_street.find({'address':{"$exists":1}},{'address':1})
     for document in result:
         print(document)
 
