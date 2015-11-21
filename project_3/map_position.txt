@@ -1,0 +1,7 @@
+Map Area: Taipei, Taiwan
+
+https://www.openstreetmap.org/export#map=11/25.0380/121.5634
+
+Taipei is the capital of Taiwan and also the place I lived for more than
+20 years, so I want to see how the OpenStreetMap data describing my
+hometown.
