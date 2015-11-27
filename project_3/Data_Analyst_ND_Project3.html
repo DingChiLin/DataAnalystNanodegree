@@ -350,7 +350,46 @@ Other files in the src directory are helpers that help me audit the raw map data
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>When I looked at the top 10 occurrences tags, one of the tag 'payment:bitcoin' drew my attention. Did it means that these places can using bitcoin to pay the bill? So I try to find all the places that have value 'yes' for this key and find out that there are 57 places fit this criteria!</p>
+<ol>
+<li><p>The max version:
+ to find the max version, I need to convert the value of version from integer to int in the first place.</p>
+<blockquote><p>for x in db.taipei_street.find():</p>
+<blockquote><p>x['created']['version'] = int(x['created']['version']);</p>
+<p>db.taipei_street.save(x);</p>
+</blockquote>
+</blockquote>
+<p>then I can find the max version by sort:</p>
+<blockquote><p>db.taipei_street.aggregate([{"\$group":{"_id":"\$created.version", "count":{"\$sum":1}}},{"\$sort":{"_id":-1}},{"\$limit":1}])</p>
+<p>168</p>
+</blockquote>
+</li>
+<li><p>Top 10 appearing buildings:</p>
+<blockquote><p>db.taipei_street.aggregate([{"\$match":{"others.building":{"\$exists":1}}},{"\$group":{"_id":"\$others.building","count":{"\$sum":1}}}, {"\$sort":{"count":-1}}, {"\$limit":10}])</p>
+</blockquote>
+<p>the top one is "yes" and I don't know what it means, I think I should have removed this one from the begininng of data cleaning, but I don't know how to construct a solid rule to remove all unresonable buildings. Beside this, the top 10 appearing buildings are as below:</p>
+<blockquote><p>{ "_id" : "commercial", "count" : 741 }</p>
+<p>{ "_id" : "school", "count" : 519 }</p>
+<p>{ "_id" : "residential", "count" : 405 }</p>
+<p>{ "_id" : "apartments", "count" : 371 }</p>
+<p>{ "_id" : "university", "count" : 366 }</p>
+<p>{ "_id" : "office", "count" : 220 }</p>
+<p>{ "_id" : "hospital", "count" : 116 }</p>
+<p>{ "_id" : "dormitory", "count" : 97 }</p>
+<p>{ "_id" : "industrial", "count" : 94 }</p>
+<p>{ "_id" : "house", "count" : 76 }</p>
+</blockquote>
+</li>
+<li><p>Top 5 appearing naturals:</p>
+<p>Since there are a lot of mountains in Taipei, it's not surprising that the most appearing naturl is "tree" and three of the top five naturals are related with tree.</p>
+<p>db.taipei_street.aggregate([{"\$match":{"others.natural":{"\$exists":1}}},{"\$group":{"_id":"\$others.natural", "count":{"\$sum":1}}}, {"\$sort":{"count":-1}}, {"\$limit":5}])</p>
+<blockquote><p>{ "_id" : "tree", "count" : 1482 }</p>
+<p>{ "_id" : "wood", "count" : 169 }</p>
+<p>{ "_id" : "water", "count" : 159 }</p>
+<p>{ "_id" : "peak", "count" : 145 }</p>
+<p>{ "_id" : "tree_row", "count" : 87 }</p>
+</blockquote>
+</li>
+<li><p>When I looked at the top 10 occurrences tags, one of the tag 'payment:bitcoin' drew my attention. Did it means that these places can using bitcoin to pay the bill? So I try to find all the places that have value 'yes' for this key and find out that there are 57 places fit this criteria!</p>
 <blockquote><p>db.taipei_street.find({"others.payment:bitcoin":{"\$eq":'yes'}},{'_id':0, 'others.payment:bitcoin':1, 'name':1}).count()</p>
 <p>57</p>
 </blockquote>
@@ -358,9 +397,24 @@ Other files in the src directory are helpers that help me audit the raw map data
 <blockquote><p>"Solo Singer: We are the first (and only) hotel in Taiwan to accept bitcoin, please help us promote it!"</p>
 </blockquote>
 <p>It's amazing since I never know there is a hotel that accept bitcoin in Taiwan before. The OpenStreetMap data just told me something I don't expect to see before auditing them. Maybe I should find a day to visit this special hotel in my hometown :)</p>
+</li>
+</ol>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre> 
+</pre></div>
+
+</div>
+</div>
+</div>
+
 </div>
     </div>
   </div>
