@@ -350,7 +350,84 @@ Other files in the src directory are helpers that help me audit the raw map data
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="3.1-Cross-validation-location-information">3.1 Cross validation location information<a class="anchor-link" href="#3.1-Cross-validation-location-information">&#182;</a></h4><ol>
+<li><p>What I did:</p>
+<ul>
+<li>Using google API to find the location of the addresses provided by each node and compare it with the 'pos' provide by the node itself. If the distance of the two point is less than 500 meter, I will consider it as a tolerable measurement error, otherwise, I think it may need some more investigations to check the correctness of the position or address information provided by the node. 
+<br/>
+<br/></li>
+</ul>
+</li>
+<li><p>Benifit:</p>
+<ul>
+<li>If a node in OpenStreetData has address information, it mean this node is a standalone point features instead of a dull point used by way and relation only. Using google map API can double check if the location and address provided by this node is correct.
+<br/>
+<br/></li>
+</ul>
+</li>
+<li><p>Prep work:
+<br/>
+<br/></p>
 <ol>
+<li><p>There are 1066 nodes with 'address.full' information in the all 298526 nodes. I pick them out by:</p>
+<blockquote><p>db.taipei_street.find({"type":'node', "address.full":{"$exists":1}},{"_id":0, "pos":1, "address.full":1})</p>
+</blockquote>
+</li>
+<li><p>I don't need the 'floor' information for the location of the nodes, so I remove them to make the google api find these locations easier.</p>
+</li>
+<li><p>If there are more than one location find by google api, I will pick the first one to use.
+<br/>
+<br/></p>
+</li>
+</ol>
+</li>
+<li><p>Conclusion:</p>
+<ol>
+<li><p>For all the nodes, there are no locations come from the two data sources that are exactly the same. This may clear the doubt that some of the position informations is just copied from the google map api in the first place.</p>
+</li>
+<li><p>There are 11 addresses have more than one location informations from google map api, but using the first location doesn't get any noticeable problem.</p>
+</li>
+<li><p>Only one node have wrong address format and can't find any location information from google map api.</p>
+</li>
+<li><p>11 nodes have right address format but can't find any location information from google map api, these addresses may need furthur investigation in the future.</p>
+</li>
+<li><p>3 nodes have more than 500 meters but less than 1 kilometer deviation from the two sources of locations</p>
+</li>
+<li><p>3 nodes have more than 1 kilometer deviation from the two sources of locations (one of them have 6.368 kilometer deviation, this one may need some furthur investigation to check the correctness)</p>
+</li>
+<li><p>Other 1037 nodes have right position with tolerable measurement error after cross validating with google map api. It means 97% of the nodes which have address information provide creditable location information.
+<br/>
+<br/></p>
+</li>
+</ol>
+</li>
+<li><p>Further Discussion:</p>
+<ol>
+<li><p>One of the problem is that if the two data soucres doesn't provide the same location informaiton, I don't know which one is right, I may need to find a third party resource to check or just decide by which one I trust more.</p>
+</li>
+<li><p>It may be helpful if the OpenStreetData website can auto check with the google map api once a new node is created, it may tell the provider if this node's location or address information need some furthur investigation.</p>
+</li>
+<li><p>I noticed that the Google Map Api doesn't allow me to do too much inquiries in the same time. It may be some insurance mechanism of Google to prevent from DDoS attack. If the OpenStreedData want to auto check with the Google Map Api, it may need some business cooperation with the Google Map Team to make sure it will give them the right to inquiry as many information as needed.
+<br/>
+<br/></p>
+</li>
+</ol>
+</li>
+<li>Source code:<ul>
+<li>related code is written in /src/cross_validating_node_position_by_google_map_api.py</li>
+</ul>
+</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="3.2-Additional-data-exploration">3.2 Additional data exploration<a class="anchor-link" href="#3.2-Additional-data-exploration">&#182;</a></h4><ol>
 <li><p>The max version:
  to find the max version, I need to convert the value of version from integer to int in the first place.</p>
 <blockquote><p>for x in db.taipei_street.find():</p>
@@ -402,19 +479,6 @@ Other files in the src directory are helpers that help me audit the raw map data
 
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre> 
-</pre></div>
-
-</div>
-</div>
-</div>
-
 </div>
     </div>
   </div>
