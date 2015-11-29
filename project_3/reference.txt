@@ -1,3 +1,5 @@
 https://en.wikipedia.org/wiki/Taipei
 https://en.wikipedia.org/wiki/Decimal_degrees
 https://twitter.com/SoloSingerInn/status/425967541291192320/photo/1
+http://stackoverflow.com/questions/4913349/haversine-formula-in-python-bearing-and-distance-between-two-gps-points
+ihttps://github.com/googlemaps/google-maps-services-python/
