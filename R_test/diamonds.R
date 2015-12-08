@@ -26,5 +26,5 @@ q = qplot(x = color, y = price/carat, data = diamonds, geom='boxplot') + coord_c
 #print(q)
 
 q = qplot(x = carat, data = diamonds, geom='freqpoly', breaks=seq(1.5,5.5,0.1))
-print(q)
+#print(q)
 
