@@ -3,6 +3,11 @@ Lesson 4
 
 ***
 
+```{r Pseudo-Facebook User Data}
+setwd('~/Documents/GitHub/DataAnalystNanodegree/R_test/EDA_Course_Materials/lesson3')
+df <- read.delim('pseudo_facebook.tsv')
+```
+
 ### Scatterplots and Perceived Audience Size
 Notes:
 
@@ -12,21 +17,24 @@ Notes:
 Notes:
 
 ```{r Scatterplots}
-
+library(ggplot2)
+qplot(data = df, x = age, y = friend_count)
 ```
 
 ***
 
 #### What are some things that you notice right away?
 Response:
-
+People who's age is under 30 have more friends
 ***
 
 ### ggplot Syntax
 Notes:
 
 ```{r ggplot Syntax}
-
+qplot(data = df, x = age, y = friend_count)
+ggplot(aes(x=age, y=friend_count), data=df) + xlim(13,90) + geom_point()
+summary(df$age)
 ```
 
 ***
@@ -35,6 +43,9 @@ Notes:
 Notes:
 
 ```{r Overplotting}
+ggplot(aes(x=age, y=friend_count), data=df) + 
+  geom_point(alpha = 1/20) + 
+  xlim(13,90)
 
 ```
 
