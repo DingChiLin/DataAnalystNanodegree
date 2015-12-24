@@ -47,24 +47,37 @@ ggplot(aes(x=age, y=friend_count), data=df) +
   geom_point(alpha = 1/20) + 
   xlim(13,90)
 
+ggplot(aes(x=age, y=friend_count), data=df) + 
+  geom_jitter(alpha = 1/20) + 
+  xlim(13,90)
 ```
 
 #### What do you notice in the plot?
 Response:
-
+People who's age is under 30 have more friends
 ***
 
 ### Coord_trans()
 Notes:
 
 ```{r Coord_trans()}
+ggplot(aes(x=age, y=sqrt(friend_count)), data=df) + 
+  geom_point(alpha = 1/20) + 
+  xlim(13,90)
 
+ggplot(aes(x=age, y=friend_count), data=df) + 
+  geom_point(alpha = 1/20) + 
+  xlim(13,90) +
+  scale_y_sqrt()
 ```
 
 #### Look up the documentation for coord_trans() and add a layer to the plot that transforms friend_count using the square root function. Create your plot!
 
 ```{r}
-
+ggplot(aes(x=age, y=friend_count), data=df) + 
+  geom_point(alpha = 1/20, position = position_jitter(h=0)) + 
+  xlim(13,90) +
+  coord_trans(y = 'sqrt')
 ```
 
 #### What do you notice?
@@ -75,7 +88,9 @@ Notes:
 Notes:
 
 ```{r Alpha and Jitter}
-
+ggplot(aes(x=age, y=friendships_initiated), data=df) + 
+  geom_point(alpha = 1/20, position = position_jitter(h=0)) + 
+  xlim(13,90)
 ```
 
 ***
@@ -89,13 +104,31 @@ Notes:
 Notes:
 
 ```{r Conditional Means}
-
+install.packages('dplyr')
+library(dplyr)
+age_groups <- group_by(df, age)
+print(age_groups)
+df.fc_by_age <- summarise(age_groups, 
+         friend_count_mean = mean(friend_count),
+         friend_count_median = median(friend_count),
+         n = n())
+df.fc_by_age <- arrange(df.fc_by_age, age)
 ```
 
 Create your plot!
 
 ```{r Conditional Means Plot}
+df.fc_by_age <- df %.%
+  group_by(age) %.%
+  summarise(friend_count_mean = mean(friend_count),
+            friend_count_median = median(friend_count),
+            n=n()) %.%
+  arrange(age)
 
+head(df.fc_by_age)
+ggplot(data = df.fc_by_age, aes(x=age, y=friend_count_mean)) + geom_line()
+
+ggplot(data = df.fc_by_age, aes(x=age, y=friend_count_median)) + geom_line()
 ```
 
 ***
@@ -104,12 +137,20 @@ Create your plot!
 Notes:
 
 ```{r Overlaying Summaries with Raw Data}
+ggplot(aes(x=age, y=friend_count), data=df) + 
+  geom_point(alpha = 1/20, position = position_jitter(h=0), color='orange') + 
+  xlim(13,90) +
+  coord_trans(y = 'sqrt') +
+  geom_line(stat='summary', fun.y=mean) +
+  geom_line(stat='summary', fun.y=quantile, probs=0.25, linetype=2, color='blue') +
+  geom_line(stat='summary', fun.y=quantile, probs=0.75, linetype=2, color='red')
 
+by(df$friend_count, df$age, summary)
 ```
 
 #### What are some of your observations of the plot?
 Response:
-
+90% of people have friends below 1000
 ***
 
 ### Moira: Histogram Summary and Scatterplot
@@ -123,7 +164,8 @@ Notes:
 Notes:
 
 ```{r Correlation}
-
+cor(df$age, df$friend_count, method='pearson')
+with(df, cor.test(age, friend_count, method='pearson'))
 ```
 
 Look up the documentation for the cor.test function.
@@ -137,7 +179,7 @@ Response:
 Notes:
 
 ```{r Correlation on Subsets}
-with(                 , cor.test(age, friend_count))
+with(subset(df, age<=70), cor.test(age, friend_count))
 ```
 
 ***
