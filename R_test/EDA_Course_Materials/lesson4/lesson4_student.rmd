@@ -180,6 +180,7 @@ Notes:
 
 ```{r Correlation on Subsets}
 with(subset(df, age<=70), cor.test(age, friend_count))
+with(subset(df, age<=70), summary(age))
 ```
 
 ***
@@ -193,7 +194,8 @@ Notes:
 Notes:
 
 ```{r}
-
+ggplot(aes(x=www_likes_received, y=likes_received), data=df) + 
+  geom_point()
 ```
 
 ***
@@ -202,13 +204,17 @@ Notes:
 Notes:
 
 ```{r Strong Correlations}
-
+ggplot(aes(x=www_likes_received, y=likes_received), data=df) + 
+  geom_point()+
+  xlim(0, quantile(df$www_likes_received, 0.95)) +
+  ylim(0, quantile(df$likes_received, 0.95)) +
+  geom_smooth(method = 'lm', color = 'red')
 ```
 
 What's the correlation betwen the two variables? Include the top 5% of values for the variable in the calculation and round to 3 decimal places.
 
 ```{r Correlation Calcuation}
-
+with(df, cor.test(www_likes_received, likes_received))
 ```
 
 Response:
@@ -226,12 +232,15 @@ Notes:
 ```{r More Caution With Correlation}
 install.packages('alr3')
 library(alr3)
+data(Mitchell)
+?Mitchell
 ```
 
 Create your plot!
 
 ```{r Temp vs Month}
-
+ggplot(aes(x=Month, y=Temp), data=Mitchell) + 
+  geom_point()
 ```
 
 ***
@@ -243,7 +252,7 @@ b. What is the actual correlation of the two variables?
 (Round to the thousandths place)
 
 ```{r Noisy Scatterplots}
-
+with(Mitchell, cor.test(Month, Temp))
 ```
 
 ***
@@ -252,7 +261,9 @@ b. What is the actual correlation of the two variables?
 Notes:
 
 ```{r Making Sense of Data}
-
+ggplot(aes(x=Month, y=Temp), data=Mitchell) + 
+  geom_point() +
+  scale_x_discrete(breaks = seq(0,203,11))
 ```
 
 ***
@@ -271,7 +282,7 @@ Notes:
 Notes:
 
 ```{r Understanding Noise: Age to Age Months}
-
+ggplot(aes(x=age, y=friend_count_mean), data = df.fc_by_age) + geom_line()
 ```
 
 ***
@@ -279,12 +290,18 @@ Notes:
 ### Age with Months Means
 
 ```{r Age with Months Means}
-
+df$age_with_months <- df$age + (12-df$dob_month)/12.0
 ```
 
 Programming Assignment
 ```{r Programming Assignment}
-
+library(dplyr)
+df.fc_by_age_months <- df %>%
+  group_by(age_with_months) %>%
+  summarise(friend_count_mean = mean(friend_count),
+            friend_count_median = median(friend_count),
+            n = n()) %>%
+  arrange(age_with_months)
 ```
 
 ***
@@ -293,6 +310,20 @@ Programming Assignment
 
 ```{r Noise in Conditional Means}
 
+p1 <- ggplot(aes(x=age, y=friend_count_mean), data = subset(df.fc_by_age, age<71)) + 
+  geom_line()
+
+p2 <- ggplot(aes(x=age_with_months, y=friend_count_mean), data = subset(df.fc_by_age_months, age_with_months<71)) + 
+  geom_line()
+
+p3 <- ggplot(aes(x=round(age/5)*5, y=friend_count), data = subset(df, age<71)) + 
+  geom_line(stat='summary', fun.y=mean)
+
+p4 = p2 + geom_smooth()
+
+
+library(gridExtra)
+grid.arrange(p1, p2, p3, p4, ncol=1)
 ```
 
 ***
@@ -302,6 +333,8 @@ Notes:
 
 ```{r Smoothing Conditional Means}
 
+ggplot(aes(x=age_with_months, y=friend_count_mean), data = subset(df.fc_by_age_months, age_with_months<71)) + 
+  geom_line()
 ```
 
 ***
