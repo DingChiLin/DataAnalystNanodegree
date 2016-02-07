@@ -15,8 +15,20 @@ Notes:
 Notes:
 
 ```{r Third Qualitative Variable}
-ggplot(aes(x = gender, y = age),
-       data = subset(pf, !is.na(gender))) + geom_histogram()
+setwd('~/Documents/GitHub/DataAnalystNanodegree/R_test/EDA_Course_Materials/lesson3')
+df <- read.delim('pseudo_facebook.tsv')
+ggplot(aes(x = age, y = friend_count),
+       data = subset(df, !is.na(gender))) + 
+  geom_line(aes(color=gender), stat = 'summary', fun.y=median)
+
+library(dplyr)
+df.fc_by_age_gender <- subset(df, !is.na(gender)) %>%
+  group_by(age, gender) %>%
+  summarise(mean_friend_count = mean(friend_count),
+    median_friend_count = median(friend_count),
+            n = n()) %>%
+  ungroup() %>%
+  arrange(age)
 ```
 
 ***
@@ -25,7 +37,9 @@ ggplot(aes(x = gender, y = age),
 Notes:
 
 ```{r Plotting Conditional Summaries}
-
+ggplot(aes(x = age, y = median_friend_count),
+       data = df.fc_by_age_gender) +
+  geom_line(aes(color=gender))
 ```
 
 ***
@@ -46,6 +60,19 @@ Notes:
 ```{r}
 install.packages('reshape2')
 library(reshape2)
+
+df.fc_by_age_gender.wide <- dcast(df.fc_by_age_gender,
+                                  age ~ gender,
+                                  value.var = 'median_friend_count')
+
+#another way
+
+install.packages('tidyr')
+library(dplyr)
+library(tidyr)
+df.fc_by_age_gender.wide2 <-     subset(df.fc_by_age_gender[c('age', 'gender', 'median_friend_count')],!is.na(gender)) %>% 
+    spread(gender, median_friend_count) %>% 
+    mutate(ratio = female / male) 
 ```
 
 
@@ -55,7 +82,11 @@ library(reshape2)
 Notes:
 
 ```{r Ratio Plot}
-
+library(ggplot2)
+p = ggplot(aes(x=age,y=ratio), data=df.fc_by_age_gender.wide2) +
+  geom_line() +
+  geom_hline(yintercept =1, color = 'red', linetype=2)
+print(p)
 ```
 
 ***
@@ -64,7 +95,7 @@ Notes:
 Notes:
 
 ```{r Third Quantitative Variable}
-
+df$year_joined <- floor(2014-df$tenure/365)
 ```
 
 ***
@@ -73,7 +104,13 @@ Notes:
 Notes:
 
 ```{r Cut a Variable}
+df$year_joined.bucket <- cut(df$year_joined, breaks = c(2004,2009,2011,2012,2014))
 
+df$prop_initiated <- ifelse(df$friend_count>0, df$friendships_initiated/df$friend_count, 0)
+
+ggplot(data=df, aes(x=tenure,y=prop_initiated)) +
+  geom_line(aes(color=year_joined.bucket), stat='summary', fun.y=median) +
+  geom_smooth()
 ```
 
 ***
@@ -82,7 +119,13 @@ Notes:
 Notes:
 
 ```{r Plotting it All Together}
+table(df$year_joined.bucket, useNA='ifany')
 
+ggplot(data=subset(df, !is.na(gender)), aes(x=age, y=friend_count)) + 
+  geom_line(aes(color=gender), stat = 'summary', fun.y=median)
+
+ggplot(data=subset(df, !is.na(year_joined.bucket)), aes(x=age, y=friend_count)) +
+  geom_line(aes(color=year_joined.bucket), stat = 'summary', fun.y=median)
 ```
 
 ***
@@ -91,7 +134,9 @@ Notes:
 Notes:
 
 ```{r Plot the Grand Mean}
-
+ggplot(data=subset(df, !is.na(year_joined.bucket)), aes(x=age, y=friend_count)) +
+  geom_line(aes(color=year_joined.bucket), stat = 'summary', fun.y=mean) +
+  geom_line(stat = 'summary', fun.y=mean, linetype=2)
 ```
 
 ***
@@ -100,7 +145,14 @@ Notes:
 Notes:
 
 ```{r Friending Rate}
+ggplot(data = subset(df, tenure != 0), aes(x = age, y=friend_count/tenure)) +
+  geom_line(stat='summary', fun.y=mean)
 
+ggplot(data = subset(df, tenure != 0), aes(x=tenure, y=friend_count)) + geom_point()
+ 
+with(subset(df, tenure != 0), mean(friend_count/tenure))
+with(subset(df, tenure != 0), median(friend_count/tenure))
+with(subset(df, tenure != 0), max(friend_count/tenure))
 ```
 
 ***
@@ -113,6 +165,9 @@ What is the median friend rate?
 What is the maximum friend rate?
 
 ```{r Friendships Initiated}
+ggplot(data = subset(df, tenure != 0), aes(x = tenure, y=friendships_initiated/tenure)) +
+  geom_line(aes(color = year_joined.bucket),stat='summary', fun.y=mean) +
+  geom_smooth(aes(color = year_joined.bucket), linetype=2)
 
 ```
 
@@ -124,25 +179,25 @@ Notes:
 ```{r Bias-Variance Tradeoff Revisited}
 
 ggplot(aes(x = tenure, y = friendships_initiated / tenure),
-       data = subset(pf, tenure >= 1)) +
+       data = subset(df, tenure >= 1)) +
   geom_line(aes(color = year_joined.bucket),
             stat = 'summary',
             fun.y = mean)
 
 ggplot(aes(x = 7 * round(tenure / 7), y = friendships_initiated / tenure),
-       data = subset(pf, tenure > 0)) +
+       data = subset(df, tenure > 0)) +
   geom_line(aes(color = year_joined.bucket),
             stat = "summary",
             fun.y = mean)
 
 ggplot(aes(x = 30 * round(tenure / 30), y = friendships_initiated / tenure),
-       data = subset(pf, tenure > 0)) +
+       data = subset(df, tenure > 0)) +
   geom_line(aes(color = year_joined.bucket),
             stat = "summary",
             fun.y = mean)
 
 ggplot(aes(x = 90 * round(tenure / 90), y = friendships_initiated / tenure),
-       data = subset(pf, tenure > 0)) +
+       data = subset(df, tenure > 0)) +
   geom_line(aes(color = year_joined.bucket),
             stat = "summary",
             fun.y = mean)
@@ -165,7 +220,15 @@ Notes:
 Notes:
 
 ```{r Histograms Revisited}
+setwd('~/Documents/GitHub/DataAnalystNanodegree/R_test/EDA_Course_Materials/lesson5')
+yo <- read.csv('yogurt.csv')
+str(yo)
 
+yo$id <- factor(yo$id)
+str(yo)
+
+ggplot(data=yo, aes(price)) + 
+  geom_histogram(binwidth = 10)
 ```
 
 ***
@@ -174,7 +237,13 @@ Notes:
 Notes:
 
 ```{r Number of Purchases}
+unique(yo$price)
+length(unique(yo$price))
+table(yo$price)
 
+yo$all.purchases <- yo$strawberry + yo$blueberry + yo$pina.colada + yo$plain + yo$mixed.berry
+  
+yo <- transform(yo, all.purchases2 = yo$strawberry + yo$blueberry + yo$pina.colada + yo$plain + yo$mixed.berry)
 ```
 
 ***
@@ -183,7 +252,10 @@ Notes:
 Notes:
 
 ```{r Prices over Time}
+ggplot(data = yo, aes(all.purchases)) +
+  geom_histogram(binwidth=1)
 
+ggplot(data = yo, aes(x=time, y=price)) + geom_jitter(alpha = 1/20)
 ```
 
 ***
@@ -196,7 +268,13 @@ Notes:
 ### Looking at Samples of Households
 
 ```{r Looking at Sample of Households}
+set.seed(4239)
+sample.ids <- sample(levels(yo$id), 16)
 
+ggplot(data=subset(yo, id %in% sample.ids),aes(x=time, y=price)) +
+  facet_wrap( ~ id) +
+  geom_line() +
+  geom_point(aes(size=all.purchases), pch=1)
 ```
 
 ***
@@ -216,6 +294,15 @@ Notes:
 
 ***
 
+
+```{r} 
+library(GGally)
+set.seed(1836)
+df_subset <- df[, c(2:15)]
+names(df_subset)
+#ggpairs(df_subset[sample.int(nrow(df_subset), 1000), ])
+```
+
 ### Even More Variables
 Notes:
 
@@ -230,6 +317,7 @@ colnames(nci) <- c(1:64)
 ```
 
 ```{r}
+library(reshape)
 nci.long.samp <- melt(as.matrix(nci[1:200,]))
 names(nci.long.samp) <- c("gene", "case", "value")
 head(nci.long.samp)
