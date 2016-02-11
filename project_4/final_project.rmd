@@ -99,7 +99,8 @@ the distribution looks like a normal distribution below 0.1 and have many huge o
 p1 = ggplot(data=df, aes(free.sulfur.dioxide)) +
   geom_histogram(binwidth=5)
 
-p2 = ggplot(data=subset(df, free.sulfur.dioxide < 100), aes(free.sulfur.dioxide)) +
+p2 = ggplot(data=subset(df, free.sulfur.dioxide < 100), 
+            aes(free.sulfur.dioxide)) +
   geom_histogram(binwidth=1)
 
 grid.arrange(p1, p2)
@@ -113,7 +114,8 @@ the distribution just looks like the above one, it's a normal distribution below
 p1 = ggplot(data=df, aes(total.sulfur.dioxide)) +
   geom_histogram(binwidth=5)
 
-p2 = ggplot(data=subset(df, total.sulfur.dioxide < 250), aes(total.sulfur.dioxide)) +
+p2 = ggplot(data=subset(df, total.sulfur.dioxide < 250), 
+            aes(total.sulfur.dioxide)) +
   geom_histogram(binwidth=1)
 
 grid.arrange(p1, p2)
@@ -166,13 +168,17 @@ It's a slight left-skewed distribution without extreme outliers.
 
 ```{r echo=FALSE}
 ggplot(data=df, aes(quality)) +
-  geom_histogram(binwidth=1)
+  geom_bar() +
+  geom_vline(xintercept=mean(df$quality), color="red") +
+  geom_vline(xintercept=quantile(df$quality), color="gray", linetype = "longdash")
 ```
 
 It is more like a categorical variable with only 7 different values, so I made a new column called quality_level and label 'A' to the quality of 9 and 'B' for 8 and so on...
 
 ```{r echo=FALSE}
-df$quality_level <- cut(df$quality, breaks = c(2,3,4,5,6,7,8,9), label=c('G','F','E','D','C','B','A'))
+df$quality_level <- cut(df$quality, 
+                        breaks = c(2,3,4,5,6,7,8,9), 
+                        label=c('G','F','E','D','C','B','A'))
 
 table(df$quality_level)
 ```
@@ -226,7 +232,7 @@ I want to have a closer look at the relationship between quality and other varia
 2. quality & alcohol
 
 ```{r echo=FALSE}
-ggplot(data=df, aes(x=alcohol, y=quality)) +
+ggplot(data=df, aes(x=quality, y=alcohol)) +
   geom_point()
 ```
 
@@ -235,6 +241,9 @@ It didn't look like have any correlation between them, since the quality have on
 ```{r echo=FALSE}
 ggplot(data=df, aes(x=quality, y=alcohol)) +
   geom_jitter(alpha = 1/20)
+
+ggplot(data=df, aes(x=quality_level, y=alcohol)) +
+  geom_boxplot()
 ```
 
 Now there is a slight positive relationship between this two variables, but still not strong. This meets the correlation coefficient value 0.435 I get before.
@@ -249,6 +258,9 @@ ggplot(data=df, aes(x=quality, y=density)) +
 
 ggplot(data=subset(df, density<1.005), aes(x=quality, y=density)) +
   geom_jitter(alpha = 1/20)
+
+ggplot(data=subset(df, density<1.005), aes(x=quality_level, y=density)) +
+  geom_boxplot()
 ```
 
 The result shows a blurred trend and meets with the data I get before.
@@ -301,11 +313,17 @@ ggplot(data=subset(df, chlorides<0.1), aes(x=chlorides, y=quality)) +
 ggplot(data=subset(df, chlorides<0.1), aes(chlorides, fill=quality_level)) +
   geom_histogram(binwidth=0.005)
 
+ggplot(data=subset(df, chlorides<0.1), aes(x=quality_level, y=chlorides)) +
+  geom_boxplot()
+
 ggplot(data=subset(df, chlorides>0.1), aes(x=chlorides, y=quality)) +
   geom_point()
 
 ggplot(data=subset(df, chlorides>0.1), aes(chlorides, fill=quality_level)) +
   geom_histogram(binwidth=0.005)
+
+ggplot(data=subset(df, chlorides>0.1), aes(x=quality_level, y=chlorides)) +
+  geom_boxplot()
 ```
 
 Most of the chlorides data lies in under 0.1, I look both the part under 0.1 and those outliers above 0.1, but there is no much surprise.
@@ -313,17 +331,26 @@ Most of the chlorides data lies in under 0.1, I look both the part under 0.1 and
 8. free.sulfur.dioxide & total.sulfur.dioxide & quality
 
 ```{r echo=FALSE}
-ggplot(data=subset(df, free.sulfur.dioxide<100 & total.sulfur.dioxide<300) , aes(x=free.sulfur.dioxide, y=total.sulfur.dioxide)) +
+ggplot(data=subset(df, free.sulfur.dioxide<100 & total.sulfur.dioxide<300),
+       aes(x=free.sulfur.dioxide, y=total.sulfur.dioxide)) +
   geom_jitter(alpha=1/5) +
   geom_smooth(method = 'lm')
 
-ggplot(data=subset(df, free.sulfur.dioxide<100) , aes(x=free.sulfur.dioxide, y=quality)) +
+ggplot(data=subset(df, free.sulfur.dioxide<100),
+       aes(x=free.sulfur.dioxide, y=quality)) +
   geom_jitter(alpha=1/10) + 
   geom_smooth(method = 'lm')
 
-ggplot(data=subset(df, total.sulfur.dioxide<300) , aes(x=total.sulfur.dioxide, y=quality)) +
+ggplot(data=subset(df, free.sulfur.dioxide<100), aes(x=quality_level, y=free.sulfur.dioxide)) +
+  geom_boxplot()
+
+ggplot(data=subset(df, total.sulfur.dioxide<300),
+       aes(x=total.sulfur.dioxide, y=quality)) +
   geom_jitter(alpha=1/10) + 
   geom_smooth(method = 'lm')
+
+ggplot(data=subset(df, total.sulfur.dioxide<300), aes(x=quality_level, y=total.sulfur.dioxide)) +
+  geom_boxplot()
 ```
 
 The two sulfur-related variables have strong correlation with each other, but both of them seems have no relationship with quality.
@@ -333,13 +360,16 @@ The two sulfur-related variables have strong correlation with each other, but bo
 It's interesting that alcohol have some negative correlation with total.sulfur.dioxide(-0.44) and residual.sugar(-0.45), and there are some positive relation(0.40) between total.sulfur.dioxide & residual.sugar.
 
 ```{r echo=FALSE}
-ggplot(data=subset(df, total.sulfur.dioxide<300) , aes(x=alcohol, y=total.sulfur.dioxide)) +
+ggplot(data=subset(df, total.sulfur.dioxide<300),
+       aes(x=alcohol, y=total.sulfur.dioxide)) +
   geom_jitter(alpha=1/5)
 
-ggplot(data=subset(df, residual.sugar<30) , aes(x=alcohol, y=residual.sugar)) +
+ggplot(data=subset(df, residual.sugar<30),
+       aes(x=alcohol, y=residual.sugar)) +
   geom_jitter(alpha=1/5)
 
-ggplot(data=subset(df, residual.sugar<30 & total.sulfur.dioxide<300) , aes(x=total.sulfur.dioxide, y=residual.sugar)) +
+ggplot(data=subset(df, residual.sugar<30 & total.sulfur.dioxide<300),
+       aes(x=total.sulfur.dioxide, y=residual.sugar)) +
   geom_jitter(alpha=1/5)
 ```
 
@@ -353,7 +383,7 @@ Quality have no strong relationship with any variables, only alcohol and density
 
 There are too few example for the best and worst level, only 5 and 20 for them. It may need more data to justify what is the best farmula for level 'A' white wine. If I made color with different levels, I can only see the dot with level 'B' to 'E' to find some pattern.
 
-The density is more disperse when the residual.sugar and alcohol is lower, but the variance is very small no matter what. The outlier of residual.sugar(65.8) make the outlier of density(1.03898) without surprising.
+The density is more disperse when the residual.sugar and alcohol is lower, but the variance is very small no matter what. The record with outlier of residual.sugar(65.8) also have extreme density value(1.03898) without surprising.
 
 ```{r echo=FALSE}
 df[df$residual.sugar >= 60,]
@@ -378,8 +408,10 @@ The strongest relationship between all the variable are residual.sugar and densi
 Since alcohol and density are the two variables with highest relationship with quality, I want to see the relationship between these three variables
 
 ```{r echo=FALSE}
-ggplot(data=subset(df, density<1.005), aes(x=alcohol, y=density, color=quality_level)) + 
-  geom_jitter(alpha=1/3)
+ggplot(data=subset(df, density<1.005),
+       aes(x=alcohol, y=density, color=quality_level)) + 
+  geom_point() +
+  scale_color_brewer(type = 'div')
 ```
 
 There are more level A-C wines lies in the area of low density and high alcohol, but high alcohol value somehow imply low density, so I may need to discard one of them if I want to do linear regression to predict the quality. I think density should be skipped since its value only have tiny variance and alcohol sounds more direct related to the quality of wine by intuition.
@@ -390,7 +422,8 @@ There are more level A-C wines lies in the area of low density and high alcohol,
 p1 = ggplot(data=df, aes(x=quality_level, y=alcohol)) +
   geom_boxplot()
 
-p2 = ggplot(data=subset(df, density<1.005), aes(x=quality_level, y=density)) +
+p2 = ggplot(data=subset(df, density<1.005),
+            aes(x=quality_level, y=density)) +
   geom_boxplot()
 
 grid.arrange(p1, p2)
@@ -403,20 +436,24 @@ It's interesing that this trend is not monotonic, the level E white wine have th
 There are two strange peaks at the histogram of citric.acid, I want to see what happened to these data. The peak around 0.5 is the most significant one, so I will start with it.
 
 ```{r echo=FALSE}
-ggplot(data=subset(df, citric.acid<0.9), aes(citric.acid, fill=quality_level)) +
+ggplot(data=subset(df, citric.acid<0.9),
+       aes(citric.acid, fill=quality_level)) +
   geom_histogram(binwidth=0.01)
 
-ggplot(data=subset(df, citric.acid<0.6 & citric.acid>0.4), aes(citric.acid, fill=quality_level)) +
+ggplot(data=subset(df, citric.acid<0.6 & citric.acid>0.4),
+       aes(citric.acid, fill=quality_level)) +
   geom_bar()
 ```
 
 using barplot to make sure the strange peak is at 0.49, looks like there are no abnormal quality destribution in this point. The citric.acid features have no significant relationship with all other features and have almost zero relationship (-0.0092) with quality. The most significant relationship between citric.acid and other features is 0.28 (with fixed.acidity), so I try to look at it.
 
 ```{r echo=FALSE}
-ggplot(data=subset(df, citric.acid<0.9), aes(citric.acid, fixed.acidity)) +
+ggplot(data=subset(df, citric.acid<0.9),
+       aes(citric.acid, fixed.acidity)) +
   geom_jitter(alpha=1/10)
 
-ggplot(data=subset(df, citric.acid<0.6 & citric.acid>0.4), aes(citric.acid, fixed.acidity)) +
+ggplot(data=subset(df, citric.acid<0.6 & citric.acid>0.4),
+       aes(citric.acid, fixed.acidity)) +
   geom_point()
 ```
 
@@ -433,7 +470,11 @@ summary(df_citric_acid_049)
 
 difference in correlation: (correlation of each variable in the new dataset minus the original one)
 ```{r echo=FALSE, warning=FALSE}
-cor(df_citric_acid_049[sapply(df_citric_acid_049, is.numeric)]) - cor(df[sapply(df, is.numeric)])
+cor(
+  df_citric_acid_049[
+    sapply(df_citric_acid_049, is.numeric)]) - cor(df[sapply(df, is.numeric)
+  ]
+)
 ```
 
 I still can't find any significant difference in the data shows above. The mean, median and correlation with other variables doesn't have any obvious change in the new dataset. So I think it may just happened by chance without further reason.  
@@ -441,8 +482,10 @@ I still can't find any significant difference in the data shows above. The mean,
 4. pH, fixed.acidity and quality
 
 ```{r echo=FALSE}
-ggplot(data=subset(df, fixed.acidity<11), aes(x=pH, y=fixed.acidity, color=quality_level)) +
-  geom_point()
+ggplot(data=subset(df, fixed.acidity<11), 
+       aes(x=pH, y=fixed.acidity, color=quality_level)) +
+  geom_point() +
+  scale_color_brewer(type = 'div')
 ```
 
 The only feature that seems to have some effect to the pH values is fixed.acidity, but none of them affect the quality much.
@@ -450,11 +493,15 @@ The only feature that seems to have some effect to the pH values is fixed.acidit
 5. residual.sugar & density & quality
 
 ```{r echo=FALSE}
-ggplot(data=subset(df, density<1.005 & residual.sugar<30) , aes(x=density, y=residual.sugar, color=quality_level)) +
-  geom_point()
+ggplot(data=subset(df, density<1.005 & residual.sugar<30),
+       aes(x=density, y=residual.sugar, color=quality_level)) +
+  geom_point() +
+  scale_color_brewer(type = 'div')
 
-ggplot(data=subset(df, density<1.005) , aes(x=density, y=log10(residual.sugar), color=quality_level)) +
-  geom_point()
+ggplot(data=subset(df, density<1.005),
+       aes(x=density, y=log10(residual.sugar), color=quality_level)) +
+  geom_point() +
+  scale_color_brewer(type = 'div')
 ```
 
 As I mentioned above, the residual.sugar have strong relationship with density and density have strong relationship with quality, but residual.sugar seems have no relationship with quality.
@@ -482,8 +529,8 @@ I try to find more relationship with quality and other features, but I can't fin
 #### Plot One
 
 ```{r echo=FALSE}
-ggplot(data=df, aes(x=quality_level, y=alcohol, fill=quality_level)) +
-  geom_boxplot() +
+ggplot(data=df, aes(x=quality_level, y=alcohol)) +
+  geom_boxplot(aes(fill=quality_level)) +
   xlab("quality_level ( A[best]~F[worst] )") +
   ylab("Alcohol (% by volume)") +
   ggtitle("Alcohol precentage vs. white wine quality") 
@@ -491,42 +538,101 @@ ggplot(data=df, aes(x=quality_level, y=alcohol, fill=quality_level)) +
 
 #### Description One
 
-Alcohol is the features that affect the white wine quality most, this plot shows that the better the quality of wine, the higher the alcohol precentage it has in general.
+Alcohol is the features that have the highest correlation value(0.44) with quality, so I want to show its relation with quality by this plot.
+
+correlation coefficient between quality and alcohol
+```{r echo=FALSE}
+cor(df['quality'], df['alcohol'])
+```
+
+outlier numbers of alcohol for each quality_level
+```{r echo=FALSE}
+outliersper <- function(x){
+    h <- quantile(x)[4] - quantile(x)[2]
+    length(which(x <  quantile(x)[2] - 1.5*h | x > quantile(x)[4] + 1.5*h)  )
+}
+by(df$alcohol, df$quality_level, outliersper)
+```
+
+standard deviation of alcohol values for each quality_level
+```{r echo=FALSE}
+by(df$alcohol, df$quality_level, sd)
+```
+
+The outlier numbers fit with the plot. The standard deviation value surprising me at first place, I thought the level E will have the largest std value since it has most outliers, however, the result shows that it has the smallest std value(0.85). After a second thought, I think it is right since it is the small std value that causes a lot of outliers. More precisely, according to the formula of outliers of geom_box, it is the small Q3 and Q1 difference that make a lot of samples be considered as outliers in the boxplot.
+
+The std value of level A quality wines is almost as large as other levels is another feature that surprising me since the data seems to concentrate in a small range in the boxplot. I think it is because there are only five samples in the data so one small outlier will raise the std value hugely.
+
+Overall, this plot shows that the better the quality of the wine, the higher the alcohol percentage it has in general. It meets with the correlation coefficient value above.
 
 #### Plot Two
 
 ```{r echo=FALSE}
-ggplot(data=subset(df, residual.sugar<30) , aes(x=density, y=residual.sugar, color=quality_level)) +
-  geom_point() +
-  scale_color_brewer(type = 'div',
-                     guide = guide_legend(title = 'Cut',
-                                          override.aes = list(alpha = 1, size = 2))) +
+ggplot(data=subset(df, residual.sugar<30),
+       aes(x=density, y=residual.sugar)) +
+  geom_point(aes(color=quality_level)) +
+  scale_color_brewer(type = 'div') +
+  geom_smooth(method = 'lm') +
   xlab("Density (g / cm^3)") +
   ylab("Residual.sugar (g / dm^3)") +
-  ggtitle("Residual.sugar vs. Density (cut with quality") 
+  ggtitle("Residual.sugar vs. Density") 
 ```
 
 #### Description Two
 
-These two features have the strongest correlation(0.84) in the whole dataset, we can see this relationship in this plot clearly. Moreover, another interesting thing that can be seen here is that although density has some relationship with quality (horizontal color difference), the residual.sugar seems to have no relationship with quality (vertical color difference).
+These two features have the strongest correlation(0.84) in the whole dataset, so I want to explore this two features and see their relationship with quality.
+
+correlation coefficient between density, residual.sugar and quality
+```{r echo=FALSE}
+cor(df[,c("density","residual.sugar","quality")])
+```
+
+mean density value of each quality level
+```{r echo=FALSE}
+by(df$density, df$quality_level, mean)
+```
+
+mean residual.sugar value of each quality level
+```{r echo=FALSE}
+by(df$residual.sugar, df$quality_level, mean)
+```
+
+The trend of mean value of residual.sugar and density at each quality level meets with the correlation coefficient and the plot. 
+
+We can see the strong relationship between density and residual.sugar clearly in this plot. Moreover, another interesting thing that can be seen here is that although density has some relationship with quality (horizontal color difference), the residual.sugar seems to have no relationship with quality (vertical color difference). I think it is because density is not the feature that 'truly' cause the difference of quality, it is the alcohol that makes the influence on both quality and density. Residual.sugar is just another feature that affect density much but doesn't affect the quality much.
 
 #### Plot Three
 
 ```{r echo=FALSE}
 ggplot(data=subset(df, density<1.005), aes(x=density, y=alcohol)) +
   geom_point(aes(color=quality_level)) +
-  scale_color_brewer(type = 'div',
-                     guide = guide_legend(title = 'Cut',
-                                          override.aes = list(alpha = 1, size = 2)))  +
+  scale_color_brewer(type = 'div')  +
   geom_smooth(method = 'lm') +
   xlab("Density (g / cm^3)") +
   ylab("Alcohol (% by volume)") +
-  ggtitle("Alcohol vs. Density (cut with quality")
+  ggtitle("Alcohol vs. Density")
 ```
 
 #### Description Three
 
-Take a closer look at the two features with the highest correlation value with quality, alcohol(0.43) and density(-0.3). Those high-quality records are concentrated in the upper-left corner. In the meanwhile, there is a clear linear regression line which indicates the correlation between density and alcohol is high, which means that they are covariance variables and maybe only one of them have the real relationship with the quality feature. 
+Following the conclusion above, I want to take a closer look at the relation between alcohol, density and quality.
+
+correlation coefficient between density, alcohol and quality
+```{r echo=FALSE}
+cor(df[,c("density","alcohol","quality")])
+```
+
+mean of density values for each quality_level
+```{r echo=FALSE}
+by(df$density, df$quality_level, summary)
+```
+
+standard deviation of density values for each quality_level
+```{r echo=FALSE}
+by(df$density, df$quality_level, sd)
+```
+
+Those high-quality records are concentrated in the upper-left corner. In the meanwhile, there is a clear linear regression line which indicates that the correlation between density and alcohol is high, which means that they are covariance variables. Moreover, from the summary and standard deviation data of density in each quality levels we can see that the density didn't have much variance in the whole dataset no matter which quality level it is, if it have some direct correlation with quality means that adding a little more high-density materials may change the quality of wine drastically and that just didn't make any sense. It's much reasonable to believe that it's the alcohol that makes the main influence on white wine quality and density is just a covariable that varies with alcohol slightly.
 
 ### Reflection
 
@@ -537,4 +643,5 @@ In this analysis project, I started by looking at the distribution of each featu
 [1] P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis. Modeling wine preferences by data mining from physicochemical properties. In Decision Support Systems, Elsevier, 47(4):547-553. ISSN: 0167-9236. 
 
 Available at: [@Elsevier] 
-http://dx.doi.org/10.1016/j.dss.2009.05.016 [Pre-press (pdf)] http://www3.dsi.uminho.pt/pcortez/winequality09.pdf [bib] http://www3.dsi.uminho.pt/pcortez/dss09.bib
+http://dx.doi.org/10.1016/j.dss.2009.05.016 [Pre-press (pdf)] http://www3.dsi.uminho.pt/pcortez/winequality09.pdf [bib] 
+http://www3.dsi.uminho.pt/pcortez/dss09.bib
