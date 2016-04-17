@@ -7,14 +7,14 @@ def get_features(data_dict):
     all_features_list.remove('email_address') #email is not a numerical feature
 
     all_data = featureFormat(data_dict, ['poi']+all_features_list, remove_all_zeroes=False)
-    _ , all_features = targetFeatureSplit(all_data)
+    all_labels, all_features = targetFeatureSplit(all_data)
 
-    return all_features_list, all_features
+    return all_labels, all_features, all_features_list
 
 
 def transform_by_scaler(data_dict, scaler):
 
-    all_features_list, all_features = get_features(data_dict)
+    _, all_features, all_features_list = get_features(data_dict)
     scaler_features = scaler.fit_transform(all_features)
 
     keys = data_dict.keys()
@@ -33,7 +33,7 @@ def transform_by_scaler(data_dict, scaler):
 
 def add_feature_by_pca(data_dict):
 
-    all_features_list, all_features = get_features(data_dict)
+    _, all_features, all_features_list = get_features(data_dict)
 
     from sklearn.decomposition import RandomizedPCA
     n_components = 2

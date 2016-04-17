@@ -59,17 +59,12 @@ my_dataset = scaler_pca_feature_data_dict
 ### Task 3: Select my feature: Using selectKBest to find the three best features
 from sklearn.feature_selection import SelectKBest, f_classif
 
-all_features_list = my_dataset.values()[0].keys()
-all_features_list.remove('poi') #poi will be label, not feature
-all_features_list.remove('email_address') #email is not a numerical feature
-
-all_data = featureFormat(my_dataset, ['poi']+all_features_list, sort_keys = False)
-all_labels, all_features = targetFeatureSplit(all_data)
+all_labels, all_features, all_features_list = get_features(my_dataset)
 
 sel = SelectKBest(f_classif, k=3)
 sel.fit(all_features, all_labels)
-feature_scores = sorted(zip(sel.scores_, all_features_list), key= lambda x:x[0])[-3:]
-#print(feature_scores)
+feature_scores = sorted(zip(sel.scores_, all_features_list), key= lambda x:x[0])[-4:]
+print(feature_scores)
 
 #Find The Three Best Component: exercised_stock_options, total_stock_value, pca_component1
 features_list = ['poi'] + map(lambda x:x[1], feature_scores)
@@ -89,7 +84,7 @@ from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import precision_score, recall_score, make_scorer
 
 def score_function(y_true, y_pred):
-    return (3*recall_score(y_true, y_pred) + 1*precision_score(y_true, y_pred))/4
+    return (2*recall_score(y_true, y_pred) + 1*precision_score(y_true, y_pred))/4
 
 scorer = make_scorer(score_function)
 
@@ -129,10 +124,11 @@ clf4 = GridSearchCV(AdaBoostClassifier(random_state=42), param_grid4, scoring=sc
 
 from sklearn.linear_model import LogisticRegression
 param_grid5 = {
+        'max_iter': [100,200,300],
         'C': [1, 10, 1e2, 5e2, 1e3, 5e3, 1e4, 5e4, 1e5],
         'tol': [1, 1e-1, 1e-4, 1e-16],
         'class_weight': [{True: 6, False: 1}, {True: 7, False: 1}, {True: 8, False: 1}, \
-                         {True: 9, False: 1}, {True: 10, False: 1}]
+                           {True: 9, False: 1}, {True: 10, False: 1}]
         }
 
 clf5 = GridSearchCV(LogisticRegression(random_state=42), param_grid5, scoring=scorer)
@@ -205,6 +201,6 @@ for clf in [clf1, clf2, clf3, clf4, clf5]:
 ### that the version of poi_id.py that you submit can be run on its own and
 ### generates the necessary .pkl files for validating your results.
 
-
+#final_clf = RandomForestClassifier(min_samples_split = 2, max_depth = 1, class_weight = {False: 1, True: 9})
 dump_classifier_and_data(final_clf, my_dataset, features_list)
 
