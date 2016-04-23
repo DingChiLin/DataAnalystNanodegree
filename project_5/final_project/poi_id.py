@@ -2,9 +2,11 @@
 
 import sys
 import pickle
+from pprint import pprint
 
 from feature_format import featureFormat, targetFeatureSplit
-from tester import dump_classifier_and_data
+from tester import test_classifier, dump_classifier_and_data
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from helper import *
 
 ### features_list is a list of strings, each of which is a feature name.
@@ -38,37 +40,20 @@ for idx, financial_value in enumerate(financial_values):
     if(nan_count >= 18 and not financial_value['poi']):
         remove_name_list.append(names[idx])
 
-#print(len(remove_name_list))
+print(len(remove_name_list))
 # remove data with too many 'NaN's : 5
 for name in remove_name_list:
     del data_dict[name]
 
 ### Task 2: Create new feature(s) : Scaler all data and create two new features by PCA
-from sklearn.preprocessing import StandardScaler
-
-#Transform by scaler
-scaler_data_dict = transform_by_scaler(data_dict, StandardScaler())
-
-#Add New Feature by PCA
-scaler_pca_feature_data_dict = add_feature_by_pca(scaler_data_dict)
-
-### Store to my_dataset for easy export below.
-my_dataset = scaler_pca_feature_data_dict
-
+my_dataset = add_customer_features(data_dict)
 
 ### Task 3: Select my feature: Using selectKBest to find the three best features
 from sklearn.feature_selection import SelectKBest, f_classif
 
 all_labels, all_features, all_features_list = get_features(my_dataset)
 
-sel = SelectKBest(f_classif, k=3)
-sel.fit(all_features, all_labels)
-feature_scores = sorted(zip(sel.scores_, all_features_list), key= lambda x:x[0])[-4:]
-print(feature_scores)
-
-#Find The Three Best Component: exercised_stock_options, total_stock_value, pca_component1
-features_list = ['poi'] + map(lambda x:x[1], feature_scores)
-#print(features_list)
+features_list = ['poi'] + all_features_list #['poi'] + map(lambda x:x[1], feature_scores)
 
 ### Extract features and labels from dataset for local testing
 data = featureFormat(my_dataset, features_list, sort_keys = True)
@@ -82,56 +67,105 @@ labels, features = targetFeatureSplit(data)
 ### http://scikit-learn.org/stable/modules/pipeline.html
 from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import precision_score, recall_score, make_scorer
+from sklearn.cross_validation import StratifiedShuffleSplit
+from sklearn.pipeline import Pipeline
+from sklearn.decomposition import PCA
 
 def score_function(y_true, y_pred):
-    return (2*recall_score(y_true, y_pred) + 1*precision_score(y_true, y_pred))/4
+    return (8*recall_score(y_true, y_pred) + 1*precision_score(y_true, y_pred))/9.0
 
 scorer = make_scorer(score_function)
+scaler = StandardScaler()
+k_fold = StratifiedShuffleSplit(labels, n_iter=10, test_size=0.3)
 
+
+#GaussianNB
 from sklearn.naive_bayes import GaussianNB
+
 param_grid1 = {} # GaussianNB have no parameter
-clf1 = GridSearchCV(GaussianNB(), param_grid1, scoring=scorer)
 
+pipeline1 = Pipeline(steps=[('minmaxer', scaler),
+                            ('selection', SelectKBest(score_func=f_classif)),
+                            ('reducer', PCA()),
+                            ('classifier', GaussianNB())])
+
+clf1 = GridSearchCV(pipeline1, param_grid=param_grid1, cv=k_fold, scoring=scorer)
+
+#SVC
 from sklearn.svm import SVC
+
 param_grid2 = {
-          'kernel' : ['rbf', 'poly'],
-          'C': [1, 10, 1e2, 5e2, 1e3, 5e3, 1e4, 5e4, 1e5],
-          'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1],
-          'class_weight': [{True: 6, False: 1}, {True: 7, False: 1}, {True: 8, False: 1}, \
+          'reducer__n_components': [0.2, 0.5, 0.7, 2, 3, 4],
+          'selection__k': [5,6,7,'all'],
+          'classifier__C': [1, 10, 1e2, 5e2, 1e3, 5e3, 1e4, 5e4, 1e5],
+          'classifier__gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1],
+          'classifier__class_weight': [{True: 6, False: 1}, {True: 7, False: 1}, {True: 8, False: 1}, \
                            {True: 9, False: 1}, {True: 10, False: 1}]
           }
 
-clf2 = GridSearchCV(SVC(random_state=42), param_grid2, scoring=scorer)
+pipeline2 = Pipeline(steps=[('minmaxer', scaler),
+                            ('selection', SelectKBest(score_func=f_classif)),
+                            ('reducer', PCA()),
+                            ('classifier', SVC(random_state=42))])
 
+clf2 = GridSearchCV(pipeline2, param_grid=param_grid2, cv=k_fold, scoring=scorer)
+
+#RandomForestClassifier
 from sklearn.ensemble import RandomForestClassifier
+
 param_grid3 = {
-          'min_samples_split' : [2,5,8,10],
-          'max_depth': [1,2,3,None],
-          'class_weight': [{True: 6, False: 1}, {True: 7, False: 1}, {True: 8, False: 1}, \
+          'reducer__n_components': [0.2, 0.5, 0.7, 2, 3, 4],
+          'selection__k': [5,6,7,'all'],
+          'classifier__criterion' : ['gini', 'entropy'],
+          'classifier__max_features' : ['auto', 'sqrt', 'log2'],
+          'classifier__min_samples_split' : [2,5,8,10],
+          'classifier__max_depth': [1,2,3,None],
+          'classifier__class_weight': [{True: 6, False: 1}, {True: 7, False: 1}, {True: 8, False: 1}, \
                            {True: 9, False: 1}, {True: 10, False: 1}]
           }
 
-clf3 = GridSearchCV(RandomForestClassifier(random_state=42), param_grid3, scoring=scorer)
+pipeline3 = Pipeline(steps=[('minmaxer', scaler),
+                            ('selection', SelectKBest(score_func=f_classif)),
+                            ('reducer', PCA()),
+                            ('classifier', RandomForestClassifier(random_state=42))])
 
+clf3 = GridSearchCV(pipeline3, param_grid=param_grid3, cv=k_fold, scoring=scorer)
+
+#AdaBoostClassifier
 from sklearn.ensemble import AdaBoostClassifier
+
 param_grid4 = {
-          'n_estimators' : [10, 30, 50, 70, 100],
-          'learning_rate': [0.01, 0.05, 0.1, 0.5, 1],
+          'reducer__n_components': [0.2, 0.5, 0.7, 2, 3, 4],
+          'selection__k': [5,6,7,'all'],
+          'classifier__n_estimators' : [10, 30, 50, 70, 100],
+          'classifier__learning_rate': [0.01, 0.05, 0.1, 0.5, 1],
           }
 
-clf4 = GridSearchCV(AdaBoostClassifier(random_state=42), param_grid4, scoring=scorer)
+pipeline4 = Pipeline(steps=[('minmaxer', scaler),
+                            ('selection', SelectKBest(score_func=f_classif)),
+                            ('reducer', PCA()),
+                            ('classifier', AdaBoostClassifier(random_state=42))])
 
+clf4 = GridSearchCV(pipeline4, param_grid=param_grid4, cv=k_fold, scoring=scorer)
 
+#LogisticRegression
 from sklearn.linear_model import LogisticRegression
 param_grid5 = {
-        'max_iter': [100,200,300],
-        'C': [1, 10, 1e2, 5e2, 1e3, 5e3, 1e4, 5e4, 1e5],
-        'tol': [1, 1e-1, 1e-4, 1e-16],
-        'class_weight': [{True: 6, False: 1}, {True: 7, False: 1}, {True: 8, False: 1}, \
-                           {True: 9, False: 1}, {True: 10, False: 1}]
+        'reducer__n_components': [0.2, 0.5, 0.7, 2, 3, 4],
+        'selection__k': [5,6,7,'all'],
+        'classifier__C': [1e-4, 1e-3, 1e-2, 1e-1, 1],
+        'classifier__tol': [1, 1e-1, 1e-4, 1e-16, 1e-32, 1e-64],
+        'classifier__class_weight': [{True: 7, False: 1}, {True: 7.3, False: 1}, \
+                           {True: 7.5, False: 1}, {True: 7.8, False: 1}, 'auto']
         }
 
-clf5 = GridSearchCV(LogisticRegression(random_state=42), param_grid5, scoring=scorer)
+
+pipeline5 = Pipeline(steps=[('minmaxer', scaler),
+                            ('selection', SelectKBest(score_func=f_classif)),
+                            ('reducer', PCA()),
+                            ('classifier', LogisticRegression(random_state=42))])
+
+clf5 = GridSearchCV(pipeline5, param_grid=param_grid5, cv=k_fold, scoring=scorer)
 
 
 ### Task 5: Tune your classifier to achieve better than .3 precision and recall 
@@ -141,60 +175,63 @@ clf5 = GridSearchCV(LogisticRegression(random_state=42), param_grid5, scoring=sc
 ### stratified shuffle split cross validation. For more info: 
 ### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
 
-from sklearn.cross_validation import train_test_split
-features_train, features_test, labels_train, labels_test = \
-    train_test_split(features, labels, test_size=0.3, random_state=42)
+#from sklearn.cross_validation import train_test_split
+#features_train, features_test, labels_train, labels_test = \
+    #train_test_split(features, labels, test_size=0.3, random_state=42)
 
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 
 final_clf = None
-highest_precesion = 0
-highest_recall = 0
 
-from sklearn import cross_validation
-for clf in [clf1, clf2, clf3, clf4, clf5]:
+######################################
+# Test Best Algorithm and parameters
+######################################
 
-    clf.fit(features_train, labels_train)
-    score = clf.best_estimator_.score(features_test, labels_test)
-    labels_pred = clf.best_estimator_.predict(features_test)
+#from sklearn import cross_validation
+#for clf in [clf1, clf2, clf3, clf4, clf5]:
 
-    ######################
-    #            Pred    #
-    #           0    1   #
-    #        0  TN   FP  #
-    # ACTUAL             #
-    #        1  FN   TP  #
-    ######################
-    print(confusion_matrix(labels_test, labels_pred))
+    #clf.fit(features, labels)
+    #print('Best Parameters: ', clf.best_params_)
+    #print('Best Score: ', clf.best_score_)
 
-    ###########################
-    # Recall     = TP/(TP+FN) #
-    # Precession = TP/(TP+FP) #
-    ###########################
+    #selector = clf.best_estimator_.named_steps['selection'].get_support()
+    #print(zip(all_features_list, selector))
+    #top_features = [x for (x, boolean) in zip(all_features_list, selector) if boolean]
+    #n_pca_components = clf.best_estimator_.named_steps['reducer'].n_components_
 
-    #target_names = ['non-poi(0)', 'poi(1)']
-    #print(classification_report(labels_test, labels_pred, target_names=target_names))
+    #print('Top Features: ', top_features)
+    #print('Number o PCA components: ', n_pca_components)
+    #final_clf = clf.best_estimator_
+    #test_classifier(clf.best_estimator_, my_dataset, features_list)
 
-    p_score = precision_score(labels_test, labels_pred)
-    r_score = recall_score(labels_test, labels_pred)
+    #print('---------------------')
 
-    print('Algorithm:', type(clf.best_estimator_).__name__)
-    print('Best Parameters: ', clf.best_params_)
-    print('Recall: ', r_score)
-    print('Precision: ', p_score)
+######################################
+# Best Algorithm and parameters
+######################################
 
-    if p_score > 0.2:
-        if r_score > highest_recall:
-            highest_recall = r_score
-            highest_precesion = p_score
-            final_clf = clf.best_estimator_
-        elif r_score == highest_recall:
-            if p_score > highest_precesion:
-                highest_precesion = p_score
-                final_clf = clf.best_estimator_
+best_params = {
+   'classifier__class_weight': [{False: 1, True: 7.8}],
+   'selection__k': ['all'],
+   'classifier__C': [0.001],
+   'reducer__n_components': [4],
+   'classifier__tol': [1e-32]}
 
-    print('---------------------')
+pipeline = Pipeline(steps=[('minmaxer', scaler),
+                            ('selection', SelectKBest(score_func=f_classif)),
+                            ('reducer', PCA()),
+                            ('classifier', LogisticRegression(random_state=42))])
+
+clf = GridSearchCV(pipeline, param_grid=best_params, cv=k_fold, scoring=scorer)
+clf.fit(features, labels)
+
+scores = clf.best_estimator_.named_steps['selection'].scores_
+pprint(sorted(zip(all_features_list, scores), key=lambda x:x[1] ))
+print(clf.best_estimator_.named_steps['reducer'].explained_variance_ratio_)
+
+final_clf = clf.best_estimator_
+test_classifier(final_clf, my_dataset, features_list)
 
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
 ### check your results. You do not need to change anything below, but make sure

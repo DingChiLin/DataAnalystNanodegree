@@ -186,7 +186,14 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="1.-Summarize-for-us-the-goal-of-this-project-and-how-machine-learning-is-useful-in-trying-to-accomplish-it.-As-part-of-your-answer,-give-some-background-on-the-dataset-and-how-it-can-be-used-to-answer-the-project-question.-Were-there-any-outliers-in-the-data-when-you-got-it,-and-how-did-you-handle-those?">1. Summarize for us the goal of this project and how machine learning is useful in trying to accomplish it. As part of your answer, give some background on the dataset and how it can be used to answer the project question. Were there any outliers in the data when you got it, and how did you handle those?<a class="anchor-link" href="#1.-Summarize-for-us-the-goal-of-this-project-and-how-machine-learning-is-useful-in-trying-to-accomplish-it.-As-part-of-your-answer,-give-some-background-on-the-dataset-and-how-it-can-be-used-to-answer-the-project-question.-Were-there-any-outliers-in-the-data-when-you-got-it,-and-how-did-you-handle-those?">&#182;</a></h3><h4 id="Background-and-Goal&#65306;">Background and Goal&#65306;<a class="anchor-link" href="#Background-and-Goal&#65306;">&#182;</a></h4><p>Enron Corporation was one of the major energy company with several tens of thousands of employs and went bankrupt in 2001. Many important people in this company has been found guilty of fraudulent commercial activities. During the investigation, lots of confidential emails and financial details were released. For this project, the goal is using 146 financial data records which, for each of them, we known already whether they are person of interest (who have been proven guilty) or not to build a model that can predict if an unknown person is POI or not given the same financial features. Machine Learning is a way to build that model by writing a program to train the computer with the known data and generate a model to predict those unknowns.</p>
+<h3 id="1.-Summarize-for-us-the-goal-of-this-project-and-how-machine-learning-is-useful-in-trying-to-accomplish-it.-As-part-of-your-answer,-give-some-background-on-the-dataset-and-how-it-can-be-used-to-answer-the-project-question.-Were-there-any-outliers-in-the-data-when-you-got-it,-and-how-did-you-handle-those?">1. Summarize for us the goal of this project and how machine learning is useful in trying to accomplish it. As part of your answer, give some background on the dataset and how it can be used to answer the project question. Were there any outliers in the data when you got it, and how did you handle those?<a class="anchor-link" href="#1.-Summarize-for-us-the-goal-of-this-project-and-how-machine-learning-is-useful-in-trying-to-accomplish-it.-As-part-of-your-answer,-give-some-background-on-the-dataset-and-how-it-can-be-used-to-answer-the-project-question.-Were-there-any-outliers-in-the-data-when-you-got-it,-and-how-did-you-handle-those?">&#182;</a></h3><h4 id="Background-and-Goal&#65306;">Background and Goal&#65306;<a class="anchor-link" href="#Background-and-Goal&#65306;">&#182;</a></h4><p>Enron Corporation was one of the major energy company with several tens of thousands of employs and went bankrupt in 2001. Many important people in this company has been found guilty of fraudulent commercial activities. During the investigation, lots of confidential emails and financial details were released.</p>
+<p>For this project, the goal is using 146 financial data records which, for each of them, we known already whether they are person of interest (who have been proven guilty) or not to build a model that can predict if an unknown person is POI or not given the same financial features. Machine Learning is a way to build that model by writing a program to train the computer with the known data and generate a model to predict those unknowns.</p>
+<h4 id="Dataset">Dataset<a class="anchor-link" href="#Dataset">&#182;</a></h4><ol>
+<li>146 data points</li>
+<li>18 POI</li>
+<li>21 features (including poi)</li>
+<li>141 data points don't have 'loan_advances' value, 128 data points don't have 'director_fees' value and 127 data points don't have 'restricted_stock_deferred' value.</li>
+</ol>
 <h4 id="Outliers:">Outliers:<a class="anchor-link" href="#Outliers:">&#182;</a></h4><ol>
 <li>I remove the 'TOTAL' records since this is just the some of all other records.</li>
 <li>I remove 5 records with more than 18 'NaN' features and is not a POI, since I only have 20 features (including the email) in each record, if more the nine-tenths of them are unknown, I think it is not a good data to put in the analysis.</li>
@@ -202,14 +209,43 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="2.-What-features-did-you-end-up-using-in-your-POI-identifier,-and-what-selection-process-did-you-use-to-pick-them?-Did-you-have-to-do-any-scaling?-Why-or-why-not?-As-part-of-the-assignment,-you-should-attempt-to-engineer-your-own-feature-that-does-not-come-ready-made-in-the-dataset----explain-what-feature-you-tried-to-make,-and-the-rationale-behind-it.-(You-do-not-necessarily-have-to-use-it-in-the-final-analysis,-only-engineer-and-test-it.)-In-your-feature-selection-step,-if-you-used-an-algorithm-like-a-decision-tree,-please-also-give-the-feature-importances-of-the-features-that-you-use,-and-if-you-used-an-automated-feature-selection-function-like-SelectKBest,-please-report-the-feature-scores-and-reasons-for-your-choice-of-parameter-values.">2. What features did you end up using in your POI identifier, and what selection process did you use to pick them? Did you have to do any scaling? Why or why not? As part of the assignment, you should attempt to engineer your own feature that does not come ready-made in the dataset -- explain what feature you tried to make, and the rationale behind it. (You do not necessarily have to use it in the final analysis, only engineer and test it.) In your feature selection step, if you used an algorithm like a decision tree, please also give the feature importances of the features that you use, and if you used an automated feature selection function like SelectKBest, please report the feature scores and reasons for your choice of parameter values.<a class="anchor-link" href="#2.-What-features-did-you-end-up-using-in-your-POI-identifier,-and-what-selection-process-did-you-use-to-pick-them?-Did-you-have-to-do-any-scaling?-Why-or-why-not?-As-part-of-the-assignment,-you-should-attempt-to-engineer-your-own-feature-that-does-not-come-ready-made-in-the-dataset----explain-what-feature-you-tried-to-make,-and-the-rationale-behind-it.-(You-do-not-necessarily-have-to-use-it-in-the-final-analysis,-only-engineer-and-test-it.)-In-your-feature-selection-step,-if-you-used-an-algorithm-like-a-decision-tree,-please-also-give-the-feature-importances-of-the-features-that-you-use,-and-if-you-used-an-automated-feature-selection-function-like-SelectKBest,-please-report-the-feature-scores-and-reasons-for-your-choice-of-parameter-values.">&#182;</a></h3><p>Firstly, I use StandardScaler to scale my features, since each feature has different meaning and scale, the PCA algorithm I would like to use in the next step will have a more reasonable result if I scale the data first. The reason I choose StandardScaler instead of MixMaxScaler is because there are some extremely large values in some features, the MixMaxScaler will make some value extremely small after transformation. In that case, I will need to keep as many decimal points as needed to keep that information and make it hard to read.</p>
-<p>Secondly, I use the PCA algorithm to generate two components and put them back to my data as feature 'pca_component1' and 'pca_component2', the explained variance ratio is 0.33 for the first component and 0.17 for the second one.</p>
-<p>Finally, I use SelectKBest algorithm to find the features with highest scores and using f_classif as score function. After some testing and tuning, the final features I choose are the top four of them:</p>
+<h3 id="2.-What-features-did-you-end-up-using-in-your-POI-identifier,-and-what-selection-process-did-you-use-to-pick-them?-Did-you-have-to-do-any-scaling?-Why-or-why-not?-As-part-of-the-assignment,-you-should-attempt-to-engineer-your-own-feature-that-does-not-come-ready-made-in-the-dataset----explain-what-feature-you-tried-to-make,-and-the-rationale-behind-it.-(You-do-not-necessarily-have-to-use-it-in-the-final-analysis,-only-engineer-and-test-it.)-In-your-feature-selection-step,-if-you-used-an-algorithm-like-a-decision-tree,-please-also-give-the-feature-importances-of-the-features-that-you-use,-and-if-you-used-an-automated-feature-selection-function-like-SelectKBest,-please-report-the-feature-scores-and-reasons-for-your-choice-of-parameter-values.">2. What features did you end up using in your POI identifier, and what selection process did you use to pick them? Did you have to do any scaling? Why or why not? As part of the assignment, you should attempt to engineer your own feature that does not come ready-made in the dataset -- explain what feature you tried to make, and the rationale behind it. (You do not necessarily have to use it in the final analysis, only engineer and test it.) In your feature selection step, if you used an algorithm like a decision tree, please also give the feature importances of the features that you use, and if you used an automated feature selection function like SelectKBest, please report the feature scores and reasons for your choice of parameter values.<a class="anchor-link" href="#2.-What-features-did-you-end-up-using-in-your-POI-identifier,-and-what-selection-process-did-you-use-to-pick-them?-Did-you-have-to-do-any-scaling?-Why-or-why-not?-As-part-of-the-assignment,-you-should-attempt-to-engineer-your-own-feature-that-does-not-come-ready-made-in-the-dataset----explain-what-feature-you-tried-to-make,-and-the-rationale-behind-it.-(You-do-not-necessarily-have-to-use-it-in-the-final-analysis,-only-engineer-and-test-it.)-In-your-feature-selection-step,-if-you-used-an-algorithm-like-a-decision-tree,-please-also-give-the-feature-importances-of-the-features-that-you-use,-and-if-you-used-an-automated-feature-selection-function-like-SelectKBest,-please-report-the-feature-scores-and-reasons-for-your-choice-of-parameter-values.">&#182;</a></h3><p>I create 2 new features by adding up all the 14 financial data ('salary', 'total_payments', 'total_stock_value', ... etc) to a new one called 'financial_info', and adding all the 5 communicating related data ('to_messages', 'from_this_person_to_poi', ... etc) to a another one called 'communicating_info'.</p>
+<p>I create other 2 new features by taking a natural log transformation of the two features above, called 'log_financial_info' and 'log_communicating_info' respectively,  since the distribution of these two data are highly right skewed, a log transform can make them distributed more like a normal distribution.</p>
+<p>I think this features may give me some general information about this two different kinds of data and have a more reasonable distribution.</p>
+<p>Finally, I use a pipeline in GridSearchCV that will firstly use StandardScaler to scale the data, then use SelectKBest to choose the best features, then use PCA to reduce the dimensions, and finally, test Learning Algorithm with different combination of parameters.</p>
+<p>The best result use all data in the SelectKBest step and reduce it to 4 component in the PCA step.</p>
+<p>The sorted score of all features are listed below:</p>
 <ol>
-<li>'exercised_stock_options', socre: 23.98</li>
-<li>'total_stock_value', score: 23.34</li>
-<li>'pca_component1', score: 23.31</li>
-<li>'bonus', score: 19.99</li>
+<li>('restricted_stock_deferred', 0.06709599078118228),</li>
+<li>('from_messages', 0.18720023084121545),</li>
+<li>('deferral_payments', 0.24851659019006084),</li>
+<li>('to_messages', 1.4913280996536658),</li>
+<li>('communicating_info', 1.6444298032226174),</li>
+<li>('director_fees', 2.0050173086930219),</li>
+<li>('from_this_person_to_poi', 2.2516565052501276),</li>
+<li>('log_communicating_info', 3.9895509131051026),</li>
+<li>('other', 4.0118881468420575),</li>
+<li>('from_poi_to_this_person', 4.9405719627154756),</li>
+<li>('expenses', 5.6765390190559293),</li>
+<li>('loan_advances', 7.0080408695438878),</li>
+<li>('log_financial_info', 8.1084785051533181),</li>
+<li>('shared_receipt_with_poi', 8.1199380824959544),</li>
+<li>('total_payments', 8.4722340090109469),</li>
+<li>('restricted_stock', 8.8120939338279296),</li>
+<li>('long_term_incentive', 9.4725171365744743),</li>
+<li>('deferred_income', 11.047759080679354),</li>
+<li>('financial_info', 16.398530700629301),</li>
+<li>('salary', 17.432087382499649),</li>
+<li>('bonus', 19.989875526651542),</li>
+<li>('total_stock_value', 23.337370376732615),</li>
+<li>('exercised_stock_options', 23.979597340395269)</li>
+</ol>
+<p>The explain ratio of the 4 PCA components are listed below:</p>
+<ol>
+<li>0.34195999</li>
+<li>0.18886029</li>
+<li>0.07531905</li>
+<li>0.06393028</li>
 </ol>
 
 </div>
@@ -221,7 +257,7 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="3.-What-algorithm-did-you-end-up-using?-What-other-one(s)-did-you-try?-How-did-model-performance-differ-between-algorithms?">3. What algorithm did you end up using? What other one(s) did you try? How did model performance differ between algorithms?<a class="anchor-link" href="#3.-What-algorithm-did-you-end-up-using?-What-other-one(s)-did-you-try?-How-did-model-performance-differ-between-algorithms?">&#182;</a></h3><h4 id="Algorithms-I-tried:">Algorithms I tried:<a class="anchor-link" href="#Algorithms-I-tried:">&#182;</a></h4><p>GaussianNB, SVC, RandomForestClassifier, AdaBoost, LogisticRegression</p>
-<h4 id="Final-Decision:">Final Decision:<a class="anchor-link" href="#Final-Decision:">&#182;</a></h4><p>RandomForestClassifier</p>
+<h4 id="Final-Decision:">Final Decision:<a class="anchor-link" href="#Final-Decision:">&#182;</a></h4><p>LogisticRegression</p>
 <h4 id="Reason:">Reason:<a class="anchor-link" href="#Reason:">&#182;</a></h4><p>According to Microsoft Azure's suggestion, I choose five algorithms that best fit my situation : Predicting
 two categories. Finally, I choose the one which gives me high recall score and acceptable precision score as the best algorithm.</p>
 <p>reference: <a href="http://download.microsoft.com/download/A/6/1/A613E11E-8F9C-424A-B99D-65344785C288/microsoft-machine-learning-algorithm-cheat-sheet-v6.pdf">http://download.microsoft.com/download/A/6/1/A613E11E-8F9C-424A-B99D-65344785C288/microsoft-machine-learning-algorithm-cheat-sheet-v6.pdf</a></p>
@@ -235,32 +271,31 @@ two categories. Finally, I choose the one which gives me high recall score and a
 <tbody>
 <tr>
 <td>GaussianNB</td>
-<td>0.50</td>
-<td>0.50</td>
+<td>0.23</td>
+<td>0.26</td>
 </tr>
 <tr>
 <td>SVC</td>
 <td>1.0</td>
-<td>0.14</td>
+<td>0.15</td>
 </tr>
 <tr>
 <td>RandomForestClassifier</td>
-<td>1.0</td>
-<td>0.375</td>
+<td>0.87</td>
+<td>0.29</td>
 </tr>
 <tr>
 <td>AdaBoost</td>
-<td>0.33</td>
-<td>0.5</td>
+<td>0.19</td>
+<td>0.26</td>
 </tr>
 <tr>
 <td>LogisticRegression</td>
-<td>0.83</td>
-<td>0.39</td>
+<td>0.84</td>
+<td>0.30</td>
 </tr>
 </tbody>
 </table>
-<p>PS: Since the evaluation method is different, these scores may be a little different from the results get in tester.py.</p>
 
 </div>
 </div>
@@ -272,13 +307,48 @@ two categories. Finally, I choose the one which gives me high recall score and a
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="4.-What-does-it-mean-to-tune-the-parameters-of-an-algorithm,-and-what-can-happen-if-you-don&#8217;t-do-this-well?--How-did-you-tune-the-parameters-of-your-particular-algorithm?-(Some-algorithms-do-not-have-parameters-that-you-need-to-tune----if-this-is-the-case-for-the-one-you-picked,-identify-and-briefly-explain-how-you-would-have-done-it-for-the-model-that-was-not-your-final-choice-or-a-different-model-that-does-utilize-parameter-tuning,-e.g.-a-decision-tree-classifier).">4. What does it mean to tune the parameters of an algorithm, and what can happen if you don&#8217;t do this well?  How did you tune the parameters of your particular algorithm? (Some algorithms do not have parameters that you need to tune -- if this is the case for the one you picked, identify and briefly explain how you would have done it for the model that was not your final choice or a different model that does utilize parameter tuning, e.g. a decision tree classifier).<a class="anchor-link" href="#4.-What-does-it-mean-to-tune-the-parameters-of-an-algorithm,-and-what-can-happen-if-you-don&#8217;t-do-this-well?--How-did-you-tune-the-parameters-of-your-particular-algorithm?-(Some-algorithms-do-not-have-parameters-that-you-need-to-tune----if-this-is-the-case-for-the-one-you-picked,-identify-and-briefly-explain-how-you-would-have-done-it-for-the-model-that-was-not-your-final-choice-or-a-different-model-that-does-utilize-parameter-tuning,-e.g.-a-decision-tree-classifier).">&#182;</a></h3><p>The parameters in machine learning algorithms may change the stopping criteria or even the score evaluation methods. The performance of each algorithm may change dramatically using different parameters in different data sets. If I don't do this well, on one hand, the model may overfit the training data set and give a bad result at the testing data set or further unseen data sets, on the other hand, the model may stop too early and give a very weak model that performs badly at both the training data set and testing data set. Moreover, if I use the wrong score method, it may give me a model with high score but not the model which I want it to be.</p>
 <p>In my project, I use GridSearchCV to search lots of combinations of parameters. Since I want my model to find as many POIs as possible instead of just identify non-POIs, I give the recall score more weight. After some test and tuning, I create a customer score function that will give the weight of recall score three times larger than the weight of precision score to be the scoring function using in GridSearchCV</p>
-<p>I choose RandomForestClassifier as my final model and the best parameters is {'min_samples_split': 2, 'max_depth': 1, 'class_weight': {False: 1, True: 9}}. The best parameters of other models that I have tried are listed below:</p>
+<p>I choose LogisticRegression as my final model and the best parameters is</p>
 <ol>
-<li>naive_bayes: no parameter</li>
-<li>SVC:  {'kernel': 'rbf', 'C': 10, 'gamma': 0.0001, 'class_weight': {False: 1, True: 8}}</li>
-<li>AdaBoost: {'n_estimators': 50, 'learning_rate': 1}</li>
-<li>LogisticRegression: {'C': 10, 'max_iter': 100, 'tol': 1, 'class_weight': {False: 1, True: 9}}</li>
+<li>'selection': {'k': 'all'}</li>
+<li>'reducer': {'n_components': 4}</li>
+<li>'classifier' :{'C': 0.001, 'tol': 1e-32, 'class_weight': {False: 1, True: 7.8}}. </li>
 </ol>
+<p>The best parameters of other models that I have tried are listed below:</p>
+<table>
+<thead><tr>
+<th>Algorithm</th>
+<th>selection</th>
+<th>reducer</th>
+<th>classifier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>naive_bayes</td>
+<td>{'k': 10}</td>
+<td>{'n_components': 10}</td>
+<td>--</td>
+</tr>
+<tr>
+<td>SVC</td>
+<td>{'k': 'all'}</td>
+<td>{'n_components': 5}</td>
+<td>{'C': 1, 'gamma': 0.0005, 'class_weight': {False: 1, True: 9}}</td>
+</tr>
+<tr>
+<td>RandomForestClassifier</td>
+<td>{'k': 'all'}</td>
+<td>{'n_components': 4}</td>
+<td>{'max_features': 'sqrt', 'samples_split': 2, 'class_weight': {False: 1, True: 10}, 'max_depth': 1, 'criterion': 'gini'}</td>
+</tr>
+<tr>
+<td>AdaBoost</td>
+<td>{'k': 'all'}</td>
+<td>{'n_components': 1}</td>
+<td>{'learning_rate': 1, 'n_estimators': 50}</td>
+</tr>
+</tbody>
+</table>
 <p>reference:
 <a href="http://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-f-measure-metrics">http://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-f-measure-metrics</a></p>
 
@@ -291,7 +361,7 @@ two categories. Finally, I choose the one which gives me high recall score and a
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="5.-What-is-validation,-and-what&#8217;s-a-classic-mistake-you-can-make-if-you-do-it-wrong?-How-did-you-validate-your-analysis?">5. What is validation, and what&#8217;s a classic mistake you can make if you do it wrong? How did you validate your analysis?<a class="anchor-link" href="#5.-What-is-validation,-and-what&#8217;s-a-classic-mistake-you-can-make-if-you-do-it-wrong?-How-did-you-validate-your-analysis?">&#182;</a></h3><p>Validation is the way to see how well your model perform on non-training data (or testing data). One of the classic mistakes is overfitting, which means that the model fit very well on the training data, but perform poorly on the other data. One of the ways to avoid this situation is using cross-validation to make sure the data has been trained and tested by different kinds of splitting many times, then we will have more confidence in this model if all the result is satisfactory.</p>
-<p>The cross validation algorithm I use in this is StratifiedKFold. I choose StratifiedKFold instead of KFold because I don't have too much poi data in my dataset, I need to make sure that each fold contains roughly the same proportions of the two types of class labels. Luckily, the GridSearchCV method will perform a 3-fold StratifiedKFold by default in the training process, so I don't need to write more code to do this.</p>
+<p>The cross validation algorithm I use in this project is StratifiedShuffleSplit. I choose StratifiedShuffleSplit because I don't have too much poi data in my dataset, I need to make sure that each fold contains roughly the same proportions of the two types of class labels. I choose test_size to be 0.3 and run 10 iteration for StratifiedShuffleSplit since it give me the best result in an acceptable running time.</p>
 <p>reference: 
 <a href="http://scikit-learn.org/stable/modules/generated/sklearn.grid_search.GridSearchCV.html">http://scikit-learn.org/stable/modules/generated/sklearn.grid_search.GridSearchCV.html</a>
 <a href="https://en.wikipedia.org/wiki/Cross-validation_(statistics">https://en.wikipedia.org/wiki/Cross-validation_(statistics</a>)</p>
@@ -304,8 +374,13 @@ two categories. Finally, I choose the one which gives me high recall score and a
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="6.-Give-at-least-2-evaluation-metrics-and-your-average-performance-for-each-of-them.--Explain-an-interpretation-of-your-metrics-that-says-something-human-understandable-about-your-algorithm&#8217;s-performance.">6. Give at least 2 evaluation metrics and your average performance for each of them.  Explain an interpretation of your metrics that says something human-understandable about your algorithm&#8217;s performance.<a class="anchor-link" href="#6.-Give-at-least-2-evaluation-metrics-and-your-average-performance-for-each-of-them.--Explain-an-interpretation-of-your-metrics-that-says-something-human-understandable-about-your-algorithm&#8217;s-performance.">&#182;</a></h3><h4 id="Evalutaion-Metrics">Evalutaion Metrics<a class="anchor-link" href="#Evalutaion-Metrics">&#182;</a></h4><p>Since I don't have many POIs in my dataset, if I using accuracy as my evaluation metric, it may just predict everybody as non-POI and still give me a great result (better than 80%). So I choose recall as my major evaluation metric instead since I want to identify those few POI's as great as possible, which means, in the real world situation, that my model can help law enforcement officials find potential POIs. However, I don't want my model to have too poor precision value, which means, I don't want my model to predict too many non-POIs as POIs and waste related person too much time to clear out those innocent people.</p>
-<h4 id="Final-Result">Final Result<a class="anchor-link" href="#Final-Result">&#182;</a></h4><p>My final model gives me 1.0 recall score and 0.375 precision score in my own evaluation method, and 0.88 recall score and 0.31 precision score in a more robust evaluation method in tester.py provided by reviewer. This result means my model can identify POI well and not gives too many false alarms just as I wished.</p>
+<h3 id="6.-Give-at-least-2-evaluation-metrics-and-your-average-performance-for-each-of-them.--Explain-an-interpretation-of-your-metrics-that-says-something-human-understandable-about-your-algorithm&#8217;s-performance.">6. Give at least 2 evaluation metrics and your average performance for each of them.  Explain an interpretation of your metrics that says something human-understandable about your algorithm&#8217;s performance.<a class="anchor-link" href="#6.-Give-at-least-2-evaluation-metrics-and-your-average-performance-for-each-of-them.--Explain-an-interpretation-of-your-metrics-that-says-something-human-understandable-about-your-algorithm&#8217;s-performance.">&#182;</a></h3><h4 id="Evalutaion-Metrics">Evalutaion Metrics<a class="anchor-link" href="#Evalutaion-Metrics">&#182;</a></h4><p>Since I don't have many POIs in my dataset, if I using accuracy as my evaluation metric, it may just predict everybody as non-POI and still give me a great result (better than 0.8). So I choose recall and precision as my evalutation metric.</p>
+<h4 id="Recall">Recall<a class="anchor-link" href="#Recall">&#182;</a></h4><p>Recall = TruePositive / (TruePositive + FalseNegative)</p>
+<p>By definition, a higher recall score would mean less false negatives. That is, if we want all the positive (POI) to be identified as positive by our model, we need to improve the recall value because it means reduce the false negative value (a person is POI but identified as non-POI)</p>
+<h4 id="Precision">Precision<a class="anchor-link" href="#Precision">&#182;</a></h4><p>Precision = TruePositive / (TruePositive + FalsePositive)</p>
+<p>By definition, a higher precision score would mean less false positive. If we want to improve the recall value, it will make our model more like to identify a person as POI than non-POI, which means, it may increase the false positive value (a person who is not a POI but identified as POI) at the same time. So I need to keep the precision value above some threshold, 0.3 in this case, to make sure our model doesn't just identify everybody as POI blindly.</p>
+<h4 id="Final-Result">Final Result<a class="anchor-link" href="#Final-Result">&#182;</a></h4><p>I choose recall as my major evaluation metric since I want to identify those few POI's as great as possible, which means, in the real world situation, that my model can help law enforcement officials find potential POIs. However, I don't want my model to have too poor precision value, which means, I don't want my model to predict too many non-POIs as POIs and waste related person too much time to clear out those innocent people.</p>
+<p>My final model gives me 0.85 recall score and 0.30 precision score both in my evaluation method mentioned above and evaluation method provided in tester.py. This result means my model can identify POI well and not gives too many false alarms just as I wished.</p>
 
 </div>
 </div>

@@ -1,5 +1,6 @@
 from feature_format import featureFormat, targetFeatureSplit
 import numpy
+from math import log
 
 def get_features(data_dict):
     all_features_list = data_dict.values()[0].keys()
@@ -30,28 +31,41 @@ def transform_by_scaler(data_dict, scaler):
 
     return transformed_dict
 
+def remove_nan(number):
+    return 0 if number == 'NaN' else float(number)
 
-def add_feature_by_pca(data_dict):
-
+def add_customer_features(data_dict):
     _, all_features, all_features_list = get_features(data_dict)
-
-    from sklearn.decomposition import RandomizedPCA
-    n_components = 2
-    pca = RandomizedPCA(n_components=n_components, whiten=True)
-    pca_features = pca.fit_transform(all_features)
-
-    keys = ['poi']+all_features_list
-    values = all_features
-
     keys = data_dict.keys()
     new_dict = {}
-    print(pca.explained_variance_ratio_)
-
     for idx, key in enumerate(keys):
         new_dict[key] = dict(data_dict[key])
 
-        new_dict[key]['pca_component1'] = round(pca_features[idx][0],4 )
-        new_dict[key]['pca_component2'] = round(pca_features[idx][1],4 )
+        new_dict[key]['financial_info'] = \
+               (remove_nan(data_dict[key]['salary']) + \
+                remove_nan(data_dict[key]['deferral_payments']) + \
+                remove_nan(data_dict[key]['total_payments']) + \
+                remove_nan(data_dict[key]['exercised_stock_options']) + \
+                remove_nan(data_dict[key]['bonus']) + \
+                remove_nan(data_dict[key]['restricted_stock']) + \
+                remove_nan(data_dict[key]['restricted_stock_deferred']) + \
+                remove_nan(data_dict[key]['total_stock_value']) + \
+                remove_nan(data_dict[key]['expenses']) + \
+                remove_nan(data_dict[key]['loan_advances']) + \
+                remove_nan(data_dict[key]['other']) + \
+                remove_nan(data_dict[key]['director_fees']) + \
+                remove_nan(data_dict[key]['deferred_income']) + \
+                remove_nan(data_dict[key]['long_term_incentive']))
+
+        new_dict[key]['communicating_info'] = \
+               (remove_nan(data_dict[key]['shared_receipt_with_poi']) + \
+                remove_nan(data_dict[key]['to_messages']) + \
+                remove_nan(data_dict[key]['from_messages']) + \
+                remove_nan(data_dict[key]['from_this_person_to_poi']) + \
+                remove_nan(data_dict[key]['from_poi_to_this_person']))
+
+        new_dict[key]['log_financial_info'] = log(new_dict[key]['financial_info']+1)
+        new_dict[key]['log_communicating_info'] = log(new_dict[key]['communicating_info']+1)
 
     return new_dict
 
