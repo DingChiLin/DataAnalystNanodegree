@@ -72,7 +72,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 
 def score_function(y_true, y_pred):
-    return (8*recall_score(y_true, y_pred) + 1*precision_score(y_true, y_pred))/9.0
+    return (3*recall_score(y_true, y_pred) + 1*precision_score(y_true, y_pred))/4.0
 
 scorer = make_scorer(score_function)
 scaler = StandardScaler()
@@ -227,8 +227,8 @@ clf = GridSearchCV(pipeline, param_grid=best_params, cv=k_fold, scoring=scorer)
 clf.fit(features, labels)
 
 scores = clf.best_estimator_.named_steps['selection'].scores_
-pprint(sorted(zip(all_features_list, scores), key=lambda x:x[1] ))
-print(clf.best_estimator_.named_steps['reducer'].explained_variance_ratio_)
+#pprint(sorted(zip(all_features_list, scores), key=lambda x:x[1] ))
+#print(clf.best_estimator_.named_steps['reducer'].explained_variance_ratio_)
 
 final_clf = clf.best_estimator_
 test_classifier(final_clf, my_dataset, features_list)
