@@ -1,0 +1,10 @@
+## White Wine Exploration by Arthur Lin
+
+### 1. Data Summary
+
+```{r echo=FALSE, warning=FALSE}
+library(ggplot2)
+library(gridExtra)
+setwd('~/Documents/GitHub/DataAnalystNanodegree/project_6/final_project')
+df <- read.csv('pisa2012.csv')
+```
