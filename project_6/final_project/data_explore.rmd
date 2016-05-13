@@ -6,5 +6,5 @@
 library(ggplot2)
 library(gridExtra)
 setwd('~/Documents/GitHub/DataAnalystNanodegree/project_6/final_project')
-df <- read.csv('pisa2012.csv')
+pisa_df <- read.csv('pisa2012.csv')
 ```
