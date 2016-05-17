@@ -1,0 +1,50 @@
+<html>
+<div id="chartContainer">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script src="http://dimplejs.org/dist/dimple.v2.2.0.min.js"></script>
+
+
+  <script type="text/javascript">
+    var svg = dimple.newSvg("#chartContainer", 1200, 800);
+    d3.tsv("./example_data.tsv", function (data) {
+      data = dimple.filterData(data, "Month", "Dec-11");
+      console.log(data)
+      var myChart = new dimple.chart(svg, data);
+      myChart.setBounds(60, 100, 1000, 600)
+
+      //考試分數
+      var x = myChart.addMeasureAxis("x", "Price Monthly Change");
+      x.overrideMax = 35;
+
+      //上課時數
+      var y =myChart.addMeasureAxis("y", "Distribution Monthly Change");
+      y.overrideMax = 25;
+
+      //['國家', ‘科技使用程度’]
+      var s = myChart.addSeries(["SKU", "Channel"], dimple.plot.bar);
+      s.stacked = false;
+
+      // 可以做科技用具程度差異顏色表
+      myChart.assignColor("Pi 12 Pack Giftset", "red", "black", 1);
+
+      myChart.addLegend(60, 10, 610, 20, "right");
+      myChart.draw();
+
+      // 增大方塊size
+      d3.selectAll("rect.dimple-series-0")
+        .attr("width", '15px')
+        .attr("height", '15px')
+
+      // 國家 Highlight 直接改
+      d3.select('#dimple-pi-12-pack-giftset-hypermarkets----')
+        .style('stroke', 'black')
+        .attr('stroke-width', '2px')
+
+      d3.selectAll('text.dimple-axis')
+        .style("font-size", "20px")
+    });
+
+  </script>
+</div>
+</html>
