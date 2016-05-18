@@ -24,4 +24,4 @@ clean_data['ScienceScore'] = (df['PV1SCIE'] + df['PV2SCIE'] + df['PV3SCIE'] + df
 clean_data=clean_data.dropna()
 
 print(clean_data)
-clean_data.to_csv('pisa2012_clean.csv', sep=',')
+clean_data.to_csv('pisa2012_clean.csv', sep=',', index_label='index')
