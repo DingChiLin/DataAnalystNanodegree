@@ -4,28 +4,56 @@
   <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script src="http://dimplejs.org/dist/dimple.v2.2.0.min.js"></script>
 
+  <style>
+    circle {
+      'r':10
+    }
+  </style>
 
   <script type="text/javascript">
     var svg = dimple.newSvg("#chartContainer", 1200, 800);
     d3.csv("./pisa2012_transform.csv", function (data) {
-      //data = dimple.filterData(data, "Country", "MathLearningTime", "MathScore");
       console.log(data[0]);
 
-      var myChart = new dimple.chart(svg, data);
+      var mathData = [];
+      var languageData = [];
+      var scienceData = [];
+
+      for(var index in data){
+        mathData[index] = {}
+        mathData[index]['Country'] = data[index]['Country']
+        mathData[index]['ICTResourcesClass'] = data[index]['ICTResourcesClass']
+        mathData[index]['LearningTime'] = data[index]['MathLearningTime']
+        mathData[index]['Score'] = data[index]['MathScore']
+
+        languageData[index] = {}
+        languageData[index]['Country'] = data[index]['Country']
+        languageData[index]['ICTResourcesClass'] = data[index]['ICTResourcesClass']
+        languageData[index]['LearningTime'] = data[index]['LanguageLearningTime']
+        languageData[index]['Score'] = data[index]['LanguageScore']
+
+        scienceData[index] = {}
+        scienceData[index]['Country'] = data[index]['Country']
+        scienceData[index]['ICTResourcesClass'] = data[index]['ICTResourcesClass']
+        scienceData[index]['LearningTime'] = data[index]['ScienceLearningTime']
+        scienceData[index]['Score'] = data[index]['ScienceScore']
+      }
+
+
+      var myChart = new dimple.chart(svg, mathData);
       myChart.setBounds(60, 100, 800, 500)
 
-      //考試分數
-      var x = myChart.addMeasureAxis("x", "MathScore");
+      var x = myChart.addMeasureAxis("x", "Score");
       x.overrideMin = 350;
-      console.log(x)
+      x.overrideMax = 600;
 
       //上課時數
-      var y = myChart.addMeasureAxis("y", "MathLearningTime");
+      var y = myChart.addMeasureAxis("y", "LearningTime");
       y.overrideMin = 100;
+      y.overrideMax = 400;
 
       //['國家', ‘科技使用程度’]
       var s = myChart.addSeries(["Country", "ICTResourcesClass"], dimple.plot.bubble);
-      //var s = myChart.addSeries(["Country", null], dimple.plot.bubble);
       s.stacked = false;
       s.addOrderRule(['ICTResourcesClass'], true)
 
@@ -36,12 +64,31 @@
       myChart.assignColor("D", "#6CB0F8", "white", 1);
       myChart.assignColor("E", "#B3D9FD", "white", 1);
 
-      myChart.addLegend(60, 10, 610, 20, "right");
-      myChart.draw();
+      myChart.addLegend(60, 10, 610, 20, "right")
+      myChart.draw(1000).svg.selectAll("circle.dimple-series-0").attr("r", 10)
 
-      // 增大方塊size
+      //changeStyle()
+
+      setTimeout(function(){
+        //update(myChart, scienceData)
+      }, 4000);
+
+
+
+    });
+
+    function update(myChart, data){
+      //考試分數
+      myChart.data = data
+      myChart.draw(1000)
+
+      //changeStyle()
+    }
+
+    function changeStyle(){
+            // 增大方塊size
       d3.selectAll("circle.dimple-series-0")
-        .attr("r", 7)
+        .attr("r", 10)
 
       // 國家 Highlight 直接改
       //d3.select('#dimple-chinese-taipei-----')
@@ -55,8 +102,8 @@
         .style("font-size", "15px")
 
       //$(".dimple-legend").hide()
+    }
 
-    });
 
   </script>
 </div>
