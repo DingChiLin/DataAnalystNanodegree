@@ -1,6 +1,6 @@
 function Chart(){
 
-  var svg = dimple.newSvg("#chartContainer", 1200, 800);
+  var svg = dimple.newSvg("#chartContainer", 1000, 800);
 
   this.init = function(data){
     var mathData = [];
@@ -22,31 +22,40 @@ function Chart(){
       }
     }
 
-    var myChart = new dimple.chart(svg);
+    svg.append("text")
+       .attr("x", 460)
+       .attr("y", 64)
+       .attr("text-anchor", "middle")
+       .style("font-size", "20px")
+       .style("font-weight", "bold")
+       .text("Awesome charting from Dimple.js")
+
+    var myChart = new dimple.chart(svg)
     myChart.setBounds(60, 100, 800, 500)
 
-    var x = myChart.addMeasureAxis("x", "Score");
-    x.overrideMin = 350;
-    x.overrideMax = 600;
+    var x = myChart.addMeasureAxis("x", "Score")
+    x.overrideMin = 350
+    x.overrideMax = 600
+    console.log(x.totle)
+    x.title = 'Score (plausible value)'
 
     //上課時數
-    var y = myChart.addMeasureAxis("y", "LearningTime");
-    y.overrideMin = 100;
-    y.overrideMax = 400;
+    var y = myChart.addMeasureAxis("y", "LearningTime")
+    y.overrideMin = 100
+    y.overrideMax = 400
+    y.title = 'Learning Time ( min / week )'
 
     //控制大小
-    var z = myChart.addMeasureAxis("z", "Size");
+    var z = myChart.addMeasureAxis("z", "Size")
     z.overrideMin = 5
-    z.overrideMax = 40;
+    z.overrideMax = 40
 
     //['國家', ‘科技使用程度’]
-    var s = myChart.addSeries(["Country", "ICTResourcesClass"], dimple.plot.bubble);
-    s.stacked = false;
-    s.addOrderRule(['ICTResourcesClass'], true)
+    var s = myChart.addSeries(["Country", "ICTResourcesClass"], dimple.plot.bubble)
+    s.stacked = false
+    s.addOrderRule(['ICTResourcesClass'])
 
- 
-    myChart.addLegend(60, 10, 610, 20, "right")
-    myChart.draw(1000).svg.selectAll("circle.dimple-series-0").attr("r", 10)
+    myChart.addLegend(900, 100, 50, 100, "right")
 
     /**
      * Update Data and Draw
@@ -55,7 +64,7 @@ function Chart(){
     update(myChart, splitData[0])
 
     setTimeout(function(){
-      update(myChart, splitData[2])
+      //update(myChart, splitData[2])
     }, 4000);
 
   }
@@ -71,15 +80,14 @@ function Chart(){
       d3.select('#dimple-chinese-taipei-b----')
       .style('stroke', 'red')
       .attr('stroke-width', '2px')
-      .text(d.key)
     }
 
     // add color for different ICT Resource Class
-    myChart.assignColor("A", "#063870", "white", 1);
-    myChart.assignColor("B", "#0D51B0", "white", 1);
-    myChart.assignColor("C", "#3188E8", "white", 1);
-    myChart.assignColor("D", "#6CB0F8", "white", 1);
-    myChart.assignColor("E", "#B3D9FD", "white", 1);
+    myChart.assignColor("A", "#063870", "#063870", 1);
+    myChart.assignColor("B", "#0D51B0", "#0D51B0", 1);
+    myChart.assignColor("C", "#3188E8", "#3188E8", 1);
+    myChart.assignColor("D", "#6CB0F8", "#6CB0F8", 1);
+    myChart.assignColor("E", "#B3D9FD", "#B3D9FD", 1);
 
     myChart.draw(1000)
   }
