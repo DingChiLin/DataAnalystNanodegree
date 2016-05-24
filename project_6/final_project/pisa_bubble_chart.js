@@ -1,16 +1,18 @@
 function Chart(){
 
   var myChart;
+  var subjectList = ['Math', 'Language', 'Science']
+  var splitData = []
+  var reservedColors = ['rgb(34, 238, 91)', 'rgb(237, 156, 41)', 'rgb(197, 52, 48)']
+
+  var currentSubject = 0
+  var currentICTState = true
 
   this.init = function(data){
 
-    var svg = dimple.newSvg("#chartContainer", '100%', '100%');
-    var mathData = []
-    var languageData = [];
-    var scienceData = [];
+    var svg = dimple.newSvg("#chart-container", '100%', '100%');
 
-    subjectList = ['Math', 'Language', 'Science']
-    splitData = [];
+
 
     for(var s_index in subjectList){
       splitData[s_index] = []
@@ -23,7 +25,7 @@ function Chart(){
         splitData[s_index][index]['Size'] = 10
 
         if(s_index==0){ // set the selecor option only once
-          $('#highlightCountrySelector .selectpicker').append($('<option>', {
+          $('#highlight-country-selector .selectpicker').append($('<option>', {
             value: index,
             text: data[index]['Country']
           }))
@@ -32,6 +34,13 @@ function Chart(){
     }
 
     $('.selectpicker').selectpicker('refresh');
+
+    $(".ict-checkbox").bootstrapSwitch();
+    $('.ict-checkbox').on('switchChange.bootstrapSwitch', function (event, state) {
+      console.log(state);
+      currentICTState = state
+      updateData(splitData[currentSubject], currentICTState)
+    })
 
     // Title
     svg.append("text")
@@ -82,12 +91,13 @@ function Chart(){
      * Update Data and Draw
      */
 
-    updateData(splitData[0], true)
+    updateData(splitData[currentSubject], currentICTState)
     updateHighlightCountry('chinese-taipei', 'rgb(197, 52, 48)')
   }
 
   this.changeSubject = function(index){
-    updateData(splitData[index])
+    currentSubject = index;
+    updateData(splitData[currentSubject], currentICTState)
   }
 
   this.changeHighlightCountry = function(id, color){
@@ -104,6 +114,62 @@ function Chart(){
     updateICTColor(is_ict)
     myChart.draw(1000)
   }
+
+  function updateICTColor(is_ict){
+
+    myChart.assignColor("A", "#063870", "#063870", 0.9);
+    myChart.assignColor("B", "#0D51B0", "#0D51B0", 0.9);
+    myChart.assignColor("C", "#3188E8", "#3188E8", 0.9);
+    myChart.assignColor("D", "#6CB0F8", "#6CB0F8", 0.9);
+    myChart.assignColor("E", "#B3D9FD", "#B3D9FD", 0.9);
+
+    myChart.series[0].afterDraw = function (s, d) {
+      if(is_ict){
+
+        var level = d.key.split('/')[1][0]
+        var color
+
+        switch(level){
+          case 'A':
+            color = "#063870"
+            break
+          case 'B':
+            color = "#0D51B0"
+            break
+          case 'C':
+            color = "#3188E8"
+            break
+          case 'D':
+            color = "#6CB0F8"
+            break
+          case 'E':
+            color = "#B3D9FD"
+            break
+        }
+
+        d3.select(s)
+          .style('fill', color)
+          .attr('opacity', 0.9)
+
+        if(reservedColors.indexOf(d3.select(s).style('stroke')) == -1 ){
+          d3.select(s)
+           .style('stroke', color)
+        }
+
+      }else{
+        d3.select(s)
+          .style('fill', '#808080')
+          .attr('opacity', 0.6)
+
+        if(reservedColors.indexOf(d3.select(s).style('stroke')) == -1 ){
+          d3.select(s)
+            .style('stroke', '#808080')
+        }
+      }
+
+    }
+  }
+
 
   function updateHighlightCountry(country, color){
     myChart.series[0].afterDraw = function (s, d) {
@@ -124,23 +190,6 @@ function Chart(){
     myChart.draw(1000)
   }
 
-  function updateICTColor(is_ict){
-    if(is_ict){
-      myChart.assignColor("A", "#808080", "#808080", 0.6);
-      myChart.assignColor("B", "#808080", "#808080", 0.6);
-      myChart.assignColor("C", "#808080", "#808080", 0.6);
-      myChart.assignColor("D", "#808080", "#808080", 0.6);
-      myChart.assignColor("E", "#808080", "#808080", 0.6);
-    }else{
-      myChart.assignColor("A", "#063870", "#063870", 1);
-      myChart.assignColor("B", "#0D51B0", "#0D51B0", 1);
-      myChart.assignColor("C", "#3188E8", "#3188E8", 1);
-      myChart.assignColor("D", "#6CB0F8", "#6CB0F8", 1);
-      myChart.assignColor("E", "#B3D9FD", "#B3D9FD", 1);
-    }
-
-    myChart.draw(1000)
-  }
 
 }
 
