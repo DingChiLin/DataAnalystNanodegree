@@ -5,15 +5,20 @@ function Chart(){
   var splitData = []
   var reservedColors = ['rgb(34, 238, 91)', 'rgb(237, 156, 41)', 'rgb(197, 52, 48)']
 
-  var currentSubject = 0
-  var currentICTState = true
-
   this.init = function(data){
 
     var svg = dimple.newSvg("#chart-container", '100%', '100%');
 
+    // Title
+    svg.append("text")
+       .attr("x", 60)
+       .attr("y", 70)
+       .attr("text-anchor", "left")
+       .style("font-size", "25px")
+       .style("font-weight", "bold")
+       .text("Awesome charting from Dimple.js")
 
-
+    // Parse Data
     for(var s_index in subjectList){
       splitData[s_index] = []
       for(var index in data){
@@ -26,78 +31,72 @@ function Chart(){
 
         if(s_index==0){ // set the selecor option only once
           $('#highlight-country-selector .selectpicker').append($('<option>', {
-            value: index,
+            value: data[index]['Country'],
             text: data[index]['Country']
           }))
         }
       }
     }
 
+    // Default Select
     $('.selectpicker').selectpicker('refresh');
+    $('#country-select-green').selectpicker('val', ['Chinese Taipei'])
+    $('#country-select-yellow').selectpicker('val', ['China-Shanghai'])
+    $('#country-select-red').selectpicker('val', ['Massachusetts (USA)'])
 
+    // Set ICT Switch Button
     $(".ict-checkbox").bootstrapSwitch();
     $('.ict-checkbox').on('switchChange.bootstrapSwitch', function (event, state) {
-      console.log(state);
-      currentICTState = state
-      updateData(splitData[currentSubject], currentICTState)
+      updateICTColor(state)
     })
-
-    // Title
-    svg.append("text")
-       .attr("x", 60)
-       .attr("y", 70)
-       .attr("text-anchor", "left")
-       .style("font-size", "25px")
-       .style("font-weight", "bold")
-       .text("Awesome charting from Dimple.js")
 
     // ICT Resource Legend
     svg.append("text")
        .attr("x", 600)
        .attr("y", 70)
        .attr("text-anchor", "left")
+       .attr("id", "ict-title")
        .style("font-size", "15px")
        .style("font-weight", "bold")
        .text("ICT Resource (A highest ~ E lowest)")
 
-
+    // Main Chart
     myChart = new dimple.chart(svg)
     myChart.setBounds(60, 130, 800, 500)
 
+    // Score
     var x = myChart.addMeasureAxis("x", "Score")
     x.overrideMin = 360
     x.overrideMax = 600
     x.title = 'Score (plausible value)'
 
-    //上課時數
+    // Learning Time
     var y = myChart.addMeasureAxis("y", "LearningTime")
     y.overrideMin = 100
     y.overrideMax = 400
     y.title = 'Learning Time ( min / week )'
 
-    //控制大小
+    // Size
     var z = myChart.addMeasureAxis("z", "Size")
     z.overrideMin = 5
-    z.overrideMax = 30
+    z.overrideMax = 27
 
-    //['國家', ‘科技使用程度’]
+    // Group
     var s = myChart.addSeries(["Country", "ICTResourcesClass"], dimple.plot.bubble)
     s.stacked = false
     s.addOrderRule(['ICTResourcesClass'], true)
 
     myChart.addLegend(560, 90, 300, 20, "right")
 
-    /**
-     * Update Data and Draw
-     */
-
-    updateData(splitData[currentSubject], currentICTState)
-    updateHighlightCountry('chinese-taipei', 'rgb(197, 52, 48)')
+    // Update Data and Draw
+    updateData(splitData[0])
+    updateHighlightCountry('chinese-taipei', reservedColors[0])
+    updateHighlightCountry('china-shanghai', reservedColors[1])
+    updateHighlightCountry('massachusetts--usa-', reservedColors[2])
   }
 
   this.changeSubject = function(index){
-    currentSubject = index;
-    updateData(splitData[currentSubject], currentICTState)
+    updateData(splitData[index])
   }
 
   this.changeHighlightCountry = function(id, color){
@@ -109,13 +108,8 @@ function Chart(){
     return name.toLowerCase().replace(/\(|\)|\ /g, "-")
   }
 
-  function updateData(data, is_ict){
+  function updateData(data){
     myChart.data = data
-    updateICTColor(is_ict)
-    myChart.draw(1000)
-  }
-
-  function updateICTColor(is_ict){
 
     myChart.assignColor("A", "#063870", "#063870", 0.9);
     myChart.assignColor("B", "#0D51B0", "#0D51B0", 0.9);
@@ -123,8 +117,34 @@ function Chart(){
     myChart.assignColor("D", "#6CB0F8", "#6CB0F8", 0.9);
     myChart.assignColor("E", "#B3D9FD", "#B3D9FD", 0.9);
 
+    myChart.draw(1000)
+  }
+
+  function updateHighlightCountry(country, color){
+    myChart.series[0].afterDraw = function (s, d) {
+      if(s.style.stroke == color && s.id.indexOf(country) == -1){
+        d3.select(s)
+          .style('stroke', s.style.fill)
+      }
+
+      if(s.id.indexOf(country) > -1){
+        d3.select(s)
+          .style('stroke', color)
+      }
+
+      d3.select(s)
+        .style('stroke-width', '2.5px')
+    }
+
+    myChart.draw()
+  }
+
+  function updateICTColor(is_ict){
     myChart.series[0].afterDraw = function (s, d) {
       if(is_ict){
+
+        $('.dimple-legend').show()
+        $('#ict-title').show()
 
         var level = d.key.split('/')[1][0]
         var color
@@ -157,6 +177,9 @@ function Chart(){
         }
 
       }else{
+        $('.dimple-legend').hide()
+        $('#ict-title').hide()
+
         d3.select(s)
           .style('fill', '#808080')
           .attr('opacity', 0.6)
@@ -166,30 +189,11 @@ function Chart(){
             .style('stroke', '#808080')
         }
       }
-
-    }
-  }
-
-
-  function updateHighlightCountry(country, color){
-    myChart.series[0].afterDraw = function (s, d) {
-      if(s.style.stroke == color && s.id.indexOf(country) == -1){
-        d3.select(s)
-          .style('stroke', s.style.fill)
-      }
-
-      if(s.id.indexOf(country) > -1){
-        d3.select(s)
-          .style('stroke', color)
-      }
-
-      d3.select(s)
-        .style('stroke-width', '3px')
     }
 
-    myChart.draw(1000)
-  }
+    myChart.draw(1)
 
+  }
 
 }
 

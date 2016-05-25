@@ -2,8 +2,18 @@
 
 #pisa-data-container{
   position: relative;
-  width: 1000px;
+  //width: 1000px;
   height: 700px;
+}
+
+#pisa-control-button-container{
+  position: relative;
+  top: 140px;
+}
+
+.control-button{
+  margin-bottom: 40px;
+  width: 210px;
 }
 
 #gradient-ict-resource{
@@ -36,13 +46,16 @@
 
   <!--My chart drawing JS-->
   <script src="pisa_bubble_chart.js"></script>
+
 </head>
 <body>
 
-  <div id="pisa-data-container">
+  <div id="pisa-data-container" class='col-sm-9'>
     <div id="chart-container"></div>
+  </div>
 
-    <div id="subject-selector" class='col-sm-offset-1 col-sm-3'>
+  <div id="pisa-control-button-container" class='col-sm-3'>
+    <div id="subject-selector" class="control-button" >
       <p> Subject </p>
       <select class="selectpicker" data-width="100%" onchange="chart.changeSubject(this.options.selectedIndex)">
         <option>Math</option>
@@ -51,18 +64,19 @@
       </select>
     </div>
 
-    <div id="highlight-country-selector" class='col-sm-3'>
+    <div id="highlight-country-selector" class="control-button">
       <p> Country </p>
       <select id='country-select-green'  class="selectpicker country-select" data-style="btn-success" data-width="100%" onchange="chart.changeHighlightCountry(this.id, 'rgb(34, 238, 91)')"></select>
       <select id='country-select-yellow' class="selectpicker country-select" data-style="btn-warning" data-width="100%" onchange="chart.changeHighlightCountry(this.id, 'rgb(237, 156, 41)')"></select>
       <select id='country-select-red'    class="selectpicker country-select" data-style="btn-danger"  data-width="100%" onchange="chart.changeHighlightCountry(this.id, 'rgb(197, 52, 48)')"></select>
     </div>
+
+    <div id="gradient-ict-resource" class="control-button">
+      <p> ICT Resource </p>
+      <input type="checkbox" class="ict-checkbox" checked>
+    </div>
   </div>
 
-  <div id="gradient-ict-resource" class='col-sm-offset-1 col-sm-3'>
-    <p> ICT Resource </p>
-    <input type="checkbox" class="ict-checkbox" checked>
-  <div>
 </body>
 </html>
 
