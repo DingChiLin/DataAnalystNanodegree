@@ -3,20 +3,32 @@ function Chart(){
   var myChart;
   var subjectList = ['Math', 'Language', 'Science']
   var splitData = []
-  var reservedColors = ['rgb(34, 238, 91)', 'rgb(237, 156, 41)', 'rgb(197, 52, 48)']
+  var thisObj = this
 
-  this.init = function(data){
+  thisObj.reservedColors = ['rgb(74, 162, 74)', 'rgb(237, 156, 41)', 'rgb(197, 52, 48)']
+
+  thisObj.init = function(data){
 
     var svg = dimple.newSvg("#chart-container", '100%', '100%');
 
     // Title
     svg.append("text")
-       .attr("x", 60)
+       .attr("x", 90)
        .attr("y", 70)
        .attr("text-anchor", "left")
        .style("font-size", "25px")
        .style("font-weight", "bold")
-       .text("Awesome charting from Dimple.js")
+       .text("Learning Time vs Score : ")
+
+    svg.append("text")
+       .attr("x", 390)
+       .attr("y", 70)
+       .attr("text-anchor", "left")
+       .attr("id", "title-subject")
+       .style("font-size", "25px")
+       .style("font-weight", "bold")
+       .text(subjectList[0])
+
 
     // Parse Data
     for(var s_index in subjectList){
@@ -58,23 +70,25 @@ function Chart(){
        .attr("id", "ict-title")
        .style("font-size", "15px")
        .style("font-weight", "bold")
-       .text("ICT Resource (A highest ~ E lowest)")
+       .text("ICT Resource (A:highest ~ E:lowest)")
 
     // Main Chart
     myChart = new dimple.chart(svg)
-    myChart.setBounds(60, 130, 800, 500)
+    myChart.setBounds(90, 130, 800, 500)
 
     // Score
     var x = myChart.addMeasureAxis("x", "Score")
     x.overrideMin = 360
     x.overrideMax = 600
     x.title = 'Score (plausible value)'
+    x.fontSize = "20"
 
     // Learning Time
     var y = myChart.addMeasureAxis("y", "LearningTime")
     y.overrideMin = 100
     y.overrideMax = 400
     y.title = 'Learning Time ( min / week )'
+    y.fontSize = "20"
 
     // Size
     var z = myChart.addMeasureAxis("z", "Size")
@@ -90,16 +104,17 @@ function Chart(){
 
     // Update Data and Draw
     updateData(splitData[0])
-    updateHighlightCountry('chinese-taipei', reservedColors[0])
-    updateHighlightCountry('china-shanghai', reservedColors[1])
-    updateHighlightCountry('massachusetts--usa-', reservedColors[2])
+    updateHighlightCountry('chinese-taipei', thisObj.reservedColors[0])
+    updateHighlightCountry('china-shanghai', thisObj.reservedColors[1])
+    updateHighlightCountry('massachusetts--usa-', thisObj.reservedColors[2])
   }
 
-  this.changeSubject = function(index){
+  thisObj.changeSubject = function(index){
+    $('#title-subject').text(subjectList[index])
     updateData(splitData[index])
   }
 
-  this.changeHighlightCountry = function(id, color){
+  thisObj.changeHighlightCountry = function(id, color){
     var country = $("#" + id + " option:selected").text()
     updateHighlightCountry(parseCountryName(country), color)
   }
@@ -125,15 +140,16 @@ function Chart(){
       if(s.style.stroke == color && s.id.indexOf(country) == -1){
         d3.select(s)
           .style('stroke', s.style.fill)
+          .style('stroke-width', '5px')
+
       }
 
       if(s.id.indexOf(country) > -1){
         d3.select(s)
           .style('stroke', color)
-      }
+          .style('stroke-width', '5px')
 
-      d3.select(s)
-        .style('stroke-width', '2.5px')
+      }
     }
 
     myChart.draw()
@@ -171,7 +187,7 @@ function Chart(){
           .style('fill', color)
           .attr('opacity', 0.9)
 
-        if(reservedColors.indexOf(d3.select(s).style('stroke')) == -1 ){
+        if(thisObj.reservedColors.indexOf(d3.select(s).style('stroke')) == -1 ){
           d3.select(s)
            .style('stroke', color)
         }
@@ -184,7 +200,7 @@ function Chart(){
           .style('fill', '#808080')
           .attr('opacity', 0.6)
 
-        if(reservedColors.indexOf(d3.select(s).style('stroke')) == -1 ){
+        if(thisObj.reservedColors.indexOf(d3.select(s).style('stroke')) == -1 ){
           d3.select(s)
             .style('stroke', '#808080')
         }
