@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-filename = 'pisa2012_clean.csv'
+filename = '../data/pisa2012_clean.csv'
 
 f_in = open(filename,'r')
 df = pd.read_csv(f_in, delimiter=",")
@@ -16,4 +16,4 @@ for col_name in df.columns.values:
 
 transformed_data['ICTResourcesClass'] = pd.cut(transformed_data['ICTResources'], 5, labels=['E','D','C','B','A'])
 
-transformed_data.to_csv('pisa2012_transform.csv', sep=',', index_label='Country')
+transformed_data.to_csv('../data/pisa2012_transform.csv', sep=',', index_label='Country')

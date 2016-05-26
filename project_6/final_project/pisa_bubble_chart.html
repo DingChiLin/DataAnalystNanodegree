@@ -14,12 +14,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
 
-  <link rel="stylesheet" href="bootstrap-switch.min.css">
-  <script src="bootstrap-switch.min.js"></script>
+  <link rel="stylesheet" href="./css/bootstrap-switch.min.css">
+  <script src="./js/bootstrap-switch.min.js"></script>
 
   <!--My chart drawing JS, CSS-->
-  <link  rel=stylesheet href="pisa_bubble_chart.css"></script>
-  <script src="pisa_bubble_chart.js"></script>^
+  <link  rel=stylesheet href="./css/pisa_bubble_chart.css"></script>
+  <script src="./js/pisa_bubble_chart.js"></script>^
 
 </head>
 <body>
@@ -56,7 +56,7 @@
 
 <script type="text/javascript">
   $(function(){
-    d3.csv("./pisa2012_transform.csv", function (data) {
+    d3.csv("./data/pisa2012_transform.csv", function (data) {
       chart.init(data, ['Chinese Taipei']);
     });
   })
