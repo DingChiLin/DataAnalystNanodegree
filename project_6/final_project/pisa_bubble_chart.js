@@ -74,20 +74,20 @@ function Chart(){
 
     // Main Chart
     myChart = new dimple.chart(svg)
-    myChart.setBounds(90, 130, 800, 600)
+    myChart.setBounds(90, 130, 800, 500)
 
     // Score
     var x = myChart.addMeasureAxis("x", "LearningTime")
-    x.overrideMin = 100
-    x.overrideMax = 400
-    x.title = 'Learning Time ( min / week )'
+    x.overrideMin = 360
+    x.overrideMax = 600
+    x.title = 'Score (plausible value)'
     x.fontSize = "20"
 
     // Learning Time
     var y = myChart.addMeasureAxis("y", "Score")
-    y.overrideMin = 360
-    y.overrideMax = 600
-    y.title = 'Score (plausible value)'
+    y.overrideMin = 100
+    y.overrideMax = 400
+    y.title = 'Learning Time ( min / week )'
     y.fontSize = "20"
 
     // Size
