@@ -1,12 +1,14 @@
 #pisa-data-container{
-  position: relative;
-  height: 800px;
+  display: inline-block;
+  width: 950px;
 }
 
 #pisa-control-button-container{
+  display: inline-block;
   position: relative;
-  left: 30px;
   top: 120px;
+  width: 230px;
+  vertical-align : top;
 }
 
 .control-button{
