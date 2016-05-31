@@ -19,7 +19,7 @@
 
   <!--My chart drawing JS, CSS-->
   <link  rel=stylesheet href="./css/pisa_bubble_chart.css"></script>
-  <script src="./js/pisa_bubble_chart.js"></script>^
+  <script src="./js/pisa_bubble_chart.js"></script>
 
 </head>
 <body>
@@ -29,26 +29,37 @@
   </div>
 
   <div id="pisa-control-button-container">
-    <div id="subject-selector" class="control-button" >
-      <p class="button-title"> Subject </p>
-      <select class="selectpicker" data-width="100%" onchange="chart.changeSubject(this.options.selectedIndex)">
-        <option>Math</option>
-        <option>Language</option>
-        <option>Science</option>
-      </select>
+
+    <div id="pida-data-story">
+      <button id='step-button' type="button" class="btn btn-default" onclick="chart.nextStep()">Next Step</button>
+      <div id='story-content'>
+        <p></p>
+      </div>
     </div>
 
-    <div id="highlight-country-selector" class="control-button">
-      <p class="button-title"> Country </p>
-      <select id='country-select-green'  class="selectpicker country-select" data-style="btn-success" data-width="100%" onchange="chart.changeHighlightCountry(this.id, chart.reservedColors[0])"></select>
-      <select id='country-select-yellow' class="selectpicker country-select" data-style="btn-warning" data-width="100%" onchange="chart.changeHighlightCountry(this.id, chart.reservedColors[1])"></select>
-      <select id='country-select-red'    class="selectpicker country-select" data-style="btn-danger"  data-width="100%" onchange="chart.changeHighlightCountry(this.id, chart.reservedColors[2])"></select>
+    <div id="pida-control-panel" hidden>
+      <div id="subject-selector" class="control-button" >
+        <p class="button-title"> Subject </p>
+        <select class="selectpicker" data-width="100%" onchange="chart.changeSubject(this.options.selectedIndex)">
+          <option>Math</option>
+          <option>Language</option>
+          <option>Science</option>
+        </select>
+      </div>
+
+      <div id="highlight-country-selector" class="control-button">
+        <p class="button-title"> Country </p>
+        <select id='country-select-green'  class="selectpicker country-select" data-style="btn-success" data-width="100%" onchange="chart.changeHighlightCountry(this.id, chart.reservedColors[0])"></select>
+        <select id='country-select-yellow' class="selectpicker country-select" data-style="btn-warning" data-width="100%" onchange="chart.changeHighlightCountry(this.id, chart.reservedColors[1])"></select>
+        <select id='country-select-red'    class="selectpicker country-select" data-style="btn-danger"  data-width="100%" onchange="chart.changeHighlightCountry(this.id, chart.reservedColors[2])"></select>
+      </div>
+
+      <div id="gradient-ict-resource" class="control-button">
+        <p class="button-title"> ICT Resource </p>
+        <input type="checkbox" class="ict-checkbox" checked>
+      </div>
     </div>
 
-    <div id="gradient-ict-resource" class="control-button">
-      <p class="button-title"> ICT Resource </p>
-      <input type="checkbox" class="ict-checkbox" checked>
-    </div>
   </div>
 
 </body>

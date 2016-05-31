@@ -4,10 +4,15 @@ function Chart(){
   var subjectList = ['Math', 'Language', 'Science']
   var splitData = []
   var thisObj = this
+  var story_step;
 
   thisObj.reservedColors = ['rgb(74, 162, 74)', 'rgb(237, 156, 41)', 'rgb(197, 52, 48)']
 
   thisObj.init = function(data){
+
+    // set step to be 1 and hide the control panel
+    story_step = 1
+    story(story_step)
 
     var svg = dimple.newSvg("#chart-container", '100%', '100%');
 
@@ -52,9 +57,9 @@ function Chart(){
 
     // Default Select
     $('.selectpicker').selectpicker('refresh');
-    $('#country-select-green').selectpicker('val', ['Chinese Taipei'])
-    $('#country-select-yellow').selectpicker('val', ['China-Shanghai'])
-    $('#country-select-red').selectpicker('val', ['Massachusetts (USA)'])
+    $('#country-select-green').selectpicker('val', ['China-Shanghai'])
+    $('#country-select-yellow').selectpicker('val', ['Vietnam'])
+    $('#country-select-red').selectpicker('val', ['Qatar'])
 
     // Set ICT Switch Button
     $(".ict-checkbox").bootstrapSwitch();
@@ -102,11 +107,59 @@ function Chart(){
 
     myChart.addLegend(560, 90, 300, 20, "right")
 
-    // Update Data and Draw
     updateData(splitData[0])
-    updateHighlightCountry('chinese-taipei', thisObj.reservedColors[0])
-    updateHighlightCountry('china-shanghai', thisObj.reservedColors[1])
-    updateHighlightCountry('massachusetts--usa-', thisObj.reservedColors[2])
+    updateICTColor(false)
+  }
+
+  this.nextStep = function(){
+    story_step += 1
+    console.log(story_step)
+    story(story_step)
+  }
+
+  function story(step){
+    var text;
+
+    switch(step){
+      case 1:
+        text = "This bubble chart describes the relationship bewteen Learning Time and Learning Achievement for each of the 69 countries "
+        break
+      case 2:
+        text = "Green is korea, spend time less than half of the country but get fifth high score,\
+                red is chile and it get poor performance while spend most time, \
+                overall, no significant relation between time and score"
+        updateHighlightCountry('korea', thisObj.reservedColors[0])
+        updateHighlightCountry('chile', thisObj.reservedColors[2])
+        updateICTColor(false)
+        break
+      case 3:
+        text = "ICT Resource mean the computer resource the country spend in education, \
+                add this variable into the chart, we can see the trend, \
+                most of those countries get high scores have high ICT Resource, too"
+        updateICTColor(true)
+        break
+      case 4:
+        text = "However, there are some exceptions,\
+                China Shanghi(green) get the best score, but the ICT level is ony C,\
+                Vietnam(orange) have the lowest ICT level, but still performed higher than half of other countries\
+                Qatar(red) have level A ICT Resource, but get very poor performance"
+        updateHighlightCountry('china-shanghai', thisObj.reservedColors[0])
+        updateHighlightCountry('vietnam', thisObj.reservedColors[1])
+        updateHighlightCountry('qatar', thisObj.reservedColors[2])
+        break
+      case 5:
+        text = "Click Next Step and you can play by yourself and see the country you are interested in, \
+                you can also change the subjects, there are three of them(Math, Language, Science), \
+                and change the highlight country or open or close the ICT information"
+        break
+      default:
+        $('#pida-data-story').hide()
+        $('#pida-control-panel').show()
+
+    }
+
+    $('#story-content p').text(text)
+
   }
 
   thisObj.changeSubject = function(index){
