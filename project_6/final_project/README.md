@@ -16,11 +16,9 @@ This bubble chart describes the relationship between learning time and learning 
   - plot : http://bl.ocks.org/DingChiLin/ef06010466f442261ec2a01da42acf01
   - design :
     1. Bubble chart: I use position to depict the main features, that is, the comparison of learning time and learning achievement between each country. Since I want to find out how much time students in each country spend in study and how well they perform. Than I can identify those students that can spend less time and get good perform and those in the contrast. Those special countries may lead us to some furthur studies and find out what's the main reason of achieving good academic performance.
-
     2. Sequential palette : I use color to compare the secondary feature - levels of ICT resource. The different depth of blue color correspond to different levels of it. Regarding to the above reason,
 I think ICT resource may be one of the reason that affect both the learnig time and learning achievement, so I use color to identify each level of ICT resource and see the trend of color change in the coordinate.
-
-    3. Pre-attentive processing : I change the stroke of the circle of Chinese Taipei (my country) to red to highlight it and see its position compare to others clearer. Since I want to track and identify those interesting countries, so I choose a way to highlight it. Initially, I want to highlight it using different shape, but it will break the wholeness of the chart. So I choose stroke color as the pre-attentive object since it is intuitive, just like circle the point, and beautiful. However, one of my colleague think it may mislead the main color of my ICT color decribed above, so I add an switch that can open and close the main color.
+    3. Pre-attentive processing : I change the stroke of the circle of Chinese Taipei (my country) to red to highlight it and see its position compare to others clearer. Since I want to track and identify those interesting countries, so I choose a way to highlight it. Initially, I want to highlight it using different shape, but it will break the wholeness of the chart. So I choose stroke color as the pre-attentive object since it is intuitive, just like circle the point, and beautiful.
 
 2. Second Plot :
 
