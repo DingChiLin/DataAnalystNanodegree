@@ -44,7 +44,7 @@ I think ICT resource may be one of the reason that affect both the learnig time 
 4. Final Plot :
 
   - commit : head
-  - plot : #TODO
+  - plot : http://bl.ocks.org/DingChiLin/c46e0ec94fcc2e8f8d8b4f3abade9d1d
   - design :  the same as the third sketch with some modifications
     1. Add an interactive function in the beginning to lead readers to follow my story.
 
