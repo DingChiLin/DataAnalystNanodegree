@@ -117,11 +117,13 @@ function Chart(){
     updateICTColor(false)
   }
 
+  // Next Step
   this.nextStep = function(){
     story_step += 1
     story(story_step)
   }
 
+  // The Contents of the story
   function story(step){
     var text;
 
@@ -129,40 +131,40 @@ function Chart(){
       case 1:
         text = "This bubble chart is made based on the PISA 2012 survey data, \
                 which shows the relation between learning time and learning achievement \
-                in math of each country (district). \
+                in math of each country (or district). <br><br>\
                 From this chart, we can see there is no significant relation \
-                between learning time and achievement, \
-                but some countries' performance is interesting."
+                between learning time and achievement in general, \
+                but we can find some special countries from this map"
         break
       case 2:
-        text = "Students in Korea (red stroke) spend time less than \
+        text = "Students in Korea (green stroke) spend time less than \
                 most of the countries but perform very well ( rank fifth ). \
-                However, Students in Chile (green stroke) spend far more time \
+                However, Students in Chile (red stroke) spend far more time \
                 on learning but perform not quite well."
         updateHighlightCountry('korea', thisObj.reservedColors[0])
         updateHighlightCountry('chile', thisObj.reservedColors[2])
         updateICTColor(false)
-        $('.dimple-legend').hide()
-        $('#ict-title').hide()
         break
       case 3:
         text = "Add one more variable - ICT resource and look again. \
                 This variable shows the information and communication technology resource \
-                students have in each country. I split it into five level from A to E, \
+                students have in each country. <br><br> \
+                I split it into five level from A to E, \
                 A means the highest and E the lowest. With the help of technology, \
-                students may spend less time on learning or get the better achievement. \
-                In the chart we can see, generally, \
+                students may spend less time on learning and get better achievement. <br><br>\
+                In this chart we can see, generally, \
                 the higher the ICT resource a country have, the better their students perform, \
                 which may explain some of the achievement gaps between Korea and Chile. \
                 However, there are still some exceptions."
         updateICTColor(true)
         break
       case 4:
-        text = "Let's look at some countries which don't follow the general trend. \
-                Students in China Shanghai (red) perform best but only have C-level ICT resource. \
-                Students in Qatar (green) have highest ICT resource but still perform very bad, \
-                in the contrast, students in Vietnam (orange) have lowest ICT resource but perform not bad. \
-                Educational researchers may take a closer look at these particular countries \
+        text = "Let's look at some countries which don't follow the general trend. <br><br>\
+                Students in China Shanghai (green) perform best but only have C-level ICT resource. <br><br>\
+                Students in Qatar (red) have highest ICT resource but still perform poorly, \
+                in the contrast, \
+                students in Vietnam (orange) have lowest ICT resource but perform not bad. <br><br>\
+                Educational researchers may take further research at these particular countries \
                 and see which variables have a greater impact on performance."
         updateHighlightCountry('china-shanghai', thisObj.reservedColors[0])
         updateHighlightCountry('vietnam', thisObj.reservedColors[1])
@@ -170,10 +172,10 @@ function Chart(){
         break
       case 5:
         text = "Now, you can choose the countries you are interested in to highlight \
-                and open or close the ICT resource color hue on your own. \
+                and open or close the ICT resource color hue on your own. <br><br>\
                 Moreover, since there are three subjects in the PISA research (Math, Language, Science), \
                 you can choose to look the other two subjects and adjust all the variables mentioned above. \
-                Good luck :)"
+                <br><br> Good luck :)"
         break
       default:
         $('#pida-data-story').hide()
@@ -181,7 +183,7 @@ function Chart(){
 
     }
 
-    $('#story-content p').text(text)
+    $('#story-content p').html(text)
 
   }
 
@@ -199,6 +201,7 @@ function Chart(){
     return name.toLowerCase().replace(/\(|\)|\ /g, "-")
   }
 
+  // Change the subject data
   function updateData(data){
     myChart.data = data
 
@@ -211,6 +214,7 @@ function Chart(){
     myChart.draw(1000)
   }
 
+  // Change the highlight country
   function updateHighlightCountry(country, color){
     myChart.series[0].afterDraw = function (s, d) {
       if(s.style.stroke == color && s.id.indexOf(country) == -1){
@@ -231,9 +235,10 @@ function Chart(){
     myChart.draw()
   }
 
+  // open and close the ICT color hue
   function updateICTColor(is_ict){
     myChart.series[0].afterDraw = function (s, d) {
-      if(is_ict){
+      if(is_ict){ // open
 
         $('.dimple-legend').show()
         $('#ict-title').show()
@@ -241,6 +246,7 @@ function Chart(){
         var level = d.key.split('/')[1][0]
         var color
 
+        // five ICTlevel
         switch(level){
           case 'A':
             color = "#063870"
@@ -268,7 +274,7 @@ function Chart(){
            .style('stroke', color)
         }
 
-      }else{
+      }else{ // close
         $('.dimple-legend').hide()
         $('#ict-title').hide()
 
@@ -282,9 +288,7 @@ function Chart(){
         }
       }
     }
-
     myChart.draw(1)
-
   }
 
 }
