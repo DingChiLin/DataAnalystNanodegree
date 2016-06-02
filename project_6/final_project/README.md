@@ -10,7 +10,7 @@ This bubble chart describes the relationship between learning time and learning 
 
 ### Design
 
-1. Initial sketch :
+1. Initial Plot :
 
   - commit : 65bca06
   - plot : http://bl.ocks.org/DingChiLin/ef06010466f442261ec2a01da42acf01
@@ -19,7 +19,7 @@ This bubble chart describes the relationship between learning time and learning 
     2. Sequential palette : I use color to compare the secondary feature - levels of ICT resource. The different depth of blue color correspond to different levels of it.
     3. Pre-attentive processing : I change the stroke of the circle of Chinese Taipei (my country) to red to highlight it and see its position compare to others clearer.
 
-2. Second sketch :
+2. Second Plot :
 
   - commit : d806265 (with a little modification)
   -  plot : http://bl.ocks.org/DingChiLin/807355cffcbaccf5a5164fbf6902cdb5
@@ -41,7 +41,7 @@ This bubble chart describes the relationship between learning time and learning 
 3. Final Plot :
 
   - commit : head
-  - plot : http://bl.ocks.org/DingChiLin/2e8551a0a8e4aa551a2b4b9686246d35
+  - plot : #TODO
   - design :  the same as the third sketch with some modifications
     1. Add an interactive function in the beginning to lead readers to follow my story.
 
@@ -53,25 +53,25 @@ This bubble chart describes the relationship between learning time and learning 
     1. No clear titles and labels.
 
   - Mark:
-  1. The learning time variable should be in the x-axis since it is more like an independent variable, even though you're not doing a correlation analysis between the learning time and learning achievement, it is more comfortable for readers.
-  2. There are three subjects in the PISA Test, can you create a select to let readers select which subject they want to see and move the bubble in plot when change subject? I want to see the difference of performances in each subject of one country.
+    1. The learning time variable should be in the x-axis since it is more like an independent variable, even though you're not doing a correlation analysis between the learning time and learning achievement, it is more comfortable for readers.
+    2. There are three subjects in the PISA Test, can you create a select to let readers select which subject they want to see and move the bubble in plot when change subject? I want to see the difference of performances in each subject of one country.
 
   - Peter:
-  1. I want to change the highlighted country, and I want to choose multiple countries at the same time, can you do that?
+    1. I want to change the highlighted country, and I want to choose multiple countries at the same time, can you do that?
 
 2. After showing the second sketch to my friends and colleagues, they give my some feedbacks:
 
   - Peter:
-  1. It's a little misleading of the blue color of the ICT resource after adding the three highlight strokes since its color will affect the sense of color of the bubble itself.
+    1. It's a little misleading of the blue color of the ICT resource after adding the three highlight strokes since its color will affect the sense of color of the bubble itself.
 
   - Grace:
-  1. The button should be put to the right blank area so I don't need to scroll up and down to change the setting and see the result. (He use Macbook-Pro 13 inch)
+    1. The button should be put to the right blank area so I don't need to scroll up and down to change the setting and see the result. (He use Macbook-Pro 13 inch)
 
 3. After submitting the project the first time:
 
   - Udacity reviewer:
-  1. I need to tell readers my story, instead of just letting them to explore it by themselves.
-  2. Remove the size value from tooltip
+    1. I need to tell readers my story, instead of just letting them to explore it by themselves.
+    2. Remove the size value from tooltip
 
 ### Resources
 
