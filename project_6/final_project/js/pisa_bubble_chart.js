@@ -34,7 +34,6 @@ function Chart(){
        .style("font-weight", "bold")
        .text(subjectList[0])
 
-
     // Parse Data
     for(var s_index in subjectList){
       splitData[s_index] = []
@@ -42,8 +41,8 @@ function Chart(){
         splitData[s_index][index] = {}
         splitData[s_index][index]['Country'] = data[index]['Country']
         splitData[s_index][index]['ICTResourcesClass'] = data[index]['ICTResourcesClass']
-        splitData[s_index][index]['LearningTime'] = data[index][ subjectList[s_index] + 'LearningTime']
-        splitData[s_index][index]['Score'] = data[index][ subjectList[s_index] + 'Score']
+        splitData[s_index][index]['LearningTime'] = data[index][subjectList[s_index] + 'LearningTime']
+        splitData[s_index][index]['Score'] = data[index][subjectList[s_index] + 'Score']
         splitData[s_index][index]['Size'] = 10
 
         if(s_index==0){ // set the selecor option only once
@@ -104,6 +103,13 @@ function Chart(){
     var s = myChart.addSeries(["Country", "ICTResourcesClass"], dimple.plot.bubble)
     s.stacked = false
     s.addOrderRule(['ICTResourcesClass'], true)
+    s.getTooltipText = function (e) {
+      console.log(e)
+      return [
+        "Country: " + e.aggField[0],
+        "ICT Level: " + e.aggField[1]
+      ]
+    }
 
     myChart.addLegend(560, 90, 300, 20, "right")
 
@@ -111,46 +117,65 @@ function Chart(){
     updateICTColor(false)
   }
 
+  // Next Step
   this.nextStep = function(){
     story_step += 1
-    console.log(story_step)
     story(story_step)
   }
 
+  // The Contents of the story
   function story(step){
     var text;
 
     switch(step){
       case 1:
-        text = "This bubble chart describes the relationship bewteen Learning Time and Learning Achievement for each of the 69 countries "
+        text = "This bubble chart is made based on the PISA 2012 survey data, \
+                which shows the relation between learning time and learning achievement \
+                in math of each country (or district). <br><br>\
+                From this chart, we can see there is no significant relation \
+                between learning time and achievement in general, \
+                but we can find some special countries from this map"
         break
       case 2:
-        text = "Green is korea, spend time less than half of the country but get fifth high score,\
-                red is chile and it get poor performance while spend most time, \
-                overall, no significant relation between time and score"
+        text = "Students in Korea (green stroke) spend time less than \
+                most of the countries but perform very well ( rank fifth ). \
+                However, Students in Chile (red stroke) spend far more time \
+                on learning but perform not quite well."
         updateHighlightCountry('korea', thisObj.reservedColors[0])
         updateHighlightCountry('chile', thisObj.reservedColors[2])
         updateICTColor(false)
         break
       case 3:
-        text = "ICT Resource mean the computer resource the country spend in education, \
-                add this variable into the chart, we can see the trend, \
-                most of those countries get high scores have high ICT Resource, too"
+        text = "Add one more variable - ICT resource and look again. \
+                This variable shows the information and communication technology resource \
+                students have in each country. <br><br> \
+                I split it into five level from A to E, \
+                A means the highest and E the lowest. With the help of technology, \
+                students may spend less time on learning and get better achievement. <br><br>\
+                In this chart we can see, generally, \
+                the higher the ICT resource a country have, the better their students perform, \
+                which may explain some of the achievement gaps between Korea and Chile. \
+                However, there are still some exceptions."
         updateICTColor(true)
         break
       case 4:
-        text = "However, there are some exceptions,\
-                China Shanghi(green) get the best score, but the ICT level is ony C,\
-                Vietnam(orange) have the lowest ICT level, but still performed higher than half of other countries\
-                Qatar(red) have level A ICT Resource, but get very poor performance"
+        text = "Let's look at some countries which don't follow the general trend. <br><br>\
+                Students in China Shanghai (green) perform best but only have C-level ICT resource. <br><br>\
+                Students in Qatar (red) have highest ICT resource but still perform poorly, \
+                in the contrast, \
+                students in Vietnam (orange) have lowest ICT resource but perform not bad. <br><br>\
+                Educational researchers may take further research at these particular countries \
+                and see which variables have a greater impact on performance."
         updateHighlightCountry('china-shanghai', thisObj.reservedColors[0])
         updateHighlightCountry('vietnam', thisObj.reservedColors[1])
         updateHighlightCountry('qatar', thisObj.reservedColors[2])
         break
       case 5:
-        text = "Click Next Step and you can play by yourself and see the country you are interested in, \
-                you can also change the subjects, there are three of them(Math, Language, Science), \
-                and change the highlight country or open or close the ICT information"
+        text = "Now, you can choose the countries you are interested in to highlight \
+                and open or close the ICT resource color hue on your own. <br><br>\
+                Moreover, since there are three subjects in the PISA research (Math, Language, Science), \
+                you can choose to look the other two subjects and adjust all the variables mentioned above. \
+                <br><br> Good luck :)"
         break
       default:
         $('#pida-data-story').hide()
@@ -158,7 +183,7 @@ function Chart(){
 
     }
 
-    $('#story-content p').text(text)
+    $('#story-content p').html(text)
 
   }
 
@@ -176,6 +201,7 @@ function Chart(){
     return name.toLowerCase().replace(/\(|\)|\ /g, "-")
   }
 
+  // Change the subject data
   function updateData(data){
     myChart.data = data
 
@@ -188,6 +214,7 @@ function Chart(){
     myChart.draw(1000)
   }
 
+  // Change the highlight country
   function updateHighlightCountry(country, color){
     myChart.series[0].afterDraw = function (s, d) {
       if(s.style.stroke == color && s.id.indexOf(country) == -1){
@@ -208,9 +235,10 @@ function Chart(){
     myChart.draw()
   }
 
+  // open and close the ICT color hue
   function updateICTColor(is_ict){
     myChart.series[0].afterDraw = function (s, d) {
-      if(is_ict){
+      if(is_ict){ // open
 
         $('.dimple-legend').show()
         $('#ict-title').show()
@@ -218,6 +246,7 @@ function Chart(){
         var level = d.key.split('/')[1][0]
         var color
 
+        // five ICTlevel
         switch(level){
           case 'A':
             color = "#063870"
@@ -245,7 +274,7 @@ function Chart(){
            .style('stroke', color)
         }
 
-      }else{
+      }else{ // close
         $('.dimple-legend').hide()
         $('#ict-title').hide()
 
@@ -259,9 +288,7 @@ function Chart(){
         }
       }
     }
-
     myChart.draw(1)
-
   }
 
 }
