@@ -196,9 +196,15 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="1.-Metric-Choice">1. Metric Choice<a class="anchor-link" href="#1.-Metric-Choice">&#182;</a></h3><h4 id="List-which-metrics-you-will-use-as-invariant-metrics-and-evaluation-metrics-here.-(These-should-be-the-same-metrics-you-chose-in-the-&quot;Choosing-Invariant-Metrics&quot;-and-&quot;Choosing-Evaluation-Metrics&quot;-quizzes.)">List which metrics you will use as invariant metrics and evaluation metrics here. (These should be the same metrics you chose in the "Choosing Invariant Metrics" and "Choosing Evaluation Metrics" quizzes.)<a class="anchor-link" href="#List-which-metrics-you-will-use-as-invariant-metrics-and-evaluation-metrics-here.-(These-should-be-the-same-metrics-you-chose-in-the-&quot;Choosing-Invariant-Metrics&quot;-and-&quot;Choosing-Evaluation-Metrics&quot;-quizzes.)">&#182;</a></h4><ol>
-<li><p>invariant metrics : Number of cookies, Number of clicks, Click-through-probability</p>
+<li><p>Invariant metrics : Number of cookies, Number of clicks, Click-through-probability</p>
+<p>Since the experiment make a change after users click the "start free trial" button and before enroll the course (by adding a message to notice the users the time commitment they are required), I would like the number of users be invariant before click the button, that is, the number of cookies view the course and the number of clicks of the button should be invariant. For the same reason, the number of user-ids of enrollment in free trial may changed after we add this notice and should not be put in the invariant metrics. Finally, the number of users click the button divide by the number of users view the course page (click-through-probability) should also be invariant since both the numerator and denominator are expected to be invariant.  <br/><br/></p>
 </li>
-<li><p>evaluaion metrics : Gross conversion, Net conversion</p>
+<li><p>Evaluaion metrics : Gross conversion, Net conversion</p>
+<p>The goal of this experiment is to find out a way to reducing the number of frustrated students who left the free trial because they didn't have enough time without significantly reducing the number of students to continue past the free trial and eventually complete the course.</p>
+<p>I would like to see the change of retention since it directly relates to the experiment, I want to see a result that "the number of users makes payment divide by the number of users enrolled the free trial" grow in the experiment group. However, the needed pageviews are way too large and may lead to unacceptable experiment duration (more than 100 days). So I can't put it in my evaluation metrics.</p>
+<p>The second choice is the gross conversion since I may see a result that reduces the rate of enrollment after we put the warning before it. This is part of the experiment goal. If I can make the number of enrollment down while keeping the number of payment unchanged, this experiment is worth launching.</p>
+<p>Thirdly, I want to see the change of net conversion since I don't want to see my change reducing the number of users who make payments after free-trial. If the number is down, I wouldn't like to launch this experiment.</p>
+<p>Finally, The gross conversion and net conversion require reasonable pageviews to run the experiment, that is, I can finish this experiment within an acceptable time period, so these two metrics are chosen as my final evaluation metrics.</p>
 </li>
 </ol>
 
@@ -211,8 +217,10 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="2.-Measuring-Standard-Deviation">2. Measuring Standard Deviation<a class="anchor-link" href="#2.-Measuring-Standard-Deviation">&#182;</a></h3><h4 id="List-the-standard-deviation-of-each-of-your-evaluation-metrics.-(These-should-be-the-answers-from-the-&quot;Calculating-standard-deviation&quot;-quiz.)">List the standard deviation of each of your evaluation metrics. (These should be the answers from the "Calculating standard deviation" quiz.)<a class="anchor-link" href="#List-the-standard-deviation-of-each-of-your-evaluation-metrics.-(These-should-be-the-answers-from-the-&quot;Calculating-standard-deviation&quot;-quiz.)">&#182;</a></h4><ol>
-<li>Gross conversion : 0.0202</li>
-<li>Net conversion : 0.0156</li>
+<li>Gross conversion : 0.0202 (400 clicks)</li>
+<li><p>Net conversion : 0.0156 (400 clicks)</p>
+<p>The emperical variabiliy of gross conversion and net conversion are not likely to match with the analytic variability. Since the unit of analysis is cookie but the unit of diversion is user-id for both of them.</p>
+</li>
 </ol>
 
 </div>
@@ -228,8 +236,10 @@ div#notebook {
 <li>Needed Pageviews : 685325</li>
 </ol>
 <h4 id="B-.-Duration-vs.-Exposure">B . Duration vs. Exposure<a class="anchor-link" href="#B-.-Duration-vs.-Exposure">&#182;</a></h4><h4 id="Indicate-what-fraction-of-traffic-you-would-divert-to-this-experiment-and,-given-this,-how-many-days-you-would-need-to-run-the-experiment.-(These-should-be-the-answers-from-the-&quot;Choosing-Duration-and-Exposure&quot;-quiz.)">Indicate what fraction of traffic you would divert to this experiment and, given this, how many days you would need to run the experiment. (These should be the answers from the "Choosing Duration and Exposure" quiz.)<a class="anchor-link" href="#Indicate-what-fraction-of-traffic-you-would-divert-to-this-experiment-and,-given-this,-how-many-days-you-would-need-to-run-the-experiment.-(These-should-be-the-answers-from-the-&quot;Choosing-Duration-and-Exposure&quot;-quiz.)">&#182;</a></h4><ol>
-<li>Fraction of traffic to divert : 1</li>
-<li>Days need to run the experiment : 18</li>
+<li>Fraction of traffic to divert : 0.5</li>
+<li><p>Days need to run the experiment : 35</p>
+<p>The risk of thie experiment is that we may decrease the number of users who make payment after free-trial. So I divert only half of the traffic to experiment, that is, only 25 percents of users will get the warning before enrollment. If it really changes the rate of payment dramatically, it only affects 25 percents of the revenue from this course. In the other hand, I don't want to take too much time to run this experiment, the days needed to take to collect enough pageviews by this fraction of traffic is acceptable (about a month).</p>
+</li>
 </ol>
 
 </div>
@@ -294,20 +304,26 @@ div#notebook {
 <h3 id="2.-Result-Analysis">2. Result Analysis<a class="anchor-link" href="#2.-Result-Analysis">&#182;</a></h3><h4 id="A.-Effect-Size-Tests">A. Effect Size Tests<a class="anchor-link" href="#A.-Effect-Size-Tests">&#182;</a></h4><h4 id="For-each-of-your-evaluation-metrics,-give-a-95%-confidence-interval-around-the-difference-between-the-experiment-and-control-groups.-Indicate-whether-each-metric-is-statistically-and-practically-significant.-(These-should-be-the-answers-from-the-&quot;Effect-Size-Tests&quot;-quiz.)">For each of your evaluation metrics, give a 95% confidence interval around the difference between the experiment and control groups. Indicate whether each metric is statistically and practically significant. (These should be the answers from the "Effect Size Tests" quiz.)<a class="anchor-link" href="#For-each-of-your-evaluation-metrics,-give-a-95%-confidence-interval-around-the-difference-between-the-experiment-and-control-groups.-Indicate-whether-each-metric-is-statistically-and-practically-significant.-(These-should-be-the-answers-from-the-&quot;Effect-Size-Tests&quot;-quiz.)">&#182;</a></h4><table>
 <thead><tr>
 <th>Evaluation metrics</th>
-<th style="text-align:center">statistically significant</th>
-<th style="text-align:center">practically significant</th>
+<th style="text-align:center">Lower bound</th>
+<th style="text-align:center">Upper bound</th>
+<th>statistically significant</th>
+<th>practically significant</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Gross conversion</td>
-<td style="text-align:center">Yes</td>
-<td style="text-align:center">Yes</td>
+<td style="text-align:center">-0.0291</td>
+<td style="text-align:center">-0.0120</td>
+<td>Yes</td>
+<td>Yes</td>
 </tr>
 <tr>
 <td>Net conversion</td>
-<td style="text-align:center">No</td>
-<td style="text-align:center">No</td>
+<td style="text-align:center">-0.0116</td>
+<td style="text-align:center">0.0019</td>
+<td>No</td>
+<td>No</td>
 </tr>
 </tbody>
 </table>
@@ -332,7 +348,9 @@ div#notebook {
 </tbody>
 </table>
 <h4 id="C.-Summary">C. Summary<a class="anchor-link" href="#C.-Summary">&#182;</a></h4><h4 id="State-whether-you-used-the-Bonferroni-correction,-and-explain-why-or-why-not.-If-there-are-any-discrepancies-between-the-effect-size-hypothesis-tests-and-the-sign-tests,-describe-the-discrepancy-and-why-you-think-it-arose.">State whether you used the Bonferroni correction, and explain why or why not. If there are any discrepancies between the effect size hypothesis tests and the sign tests, describe the discrepancy and why you think it arose.<a class="anchor-link" href="#State-whether-you-used-the-Bonferroni-correction,-and-explain-why-or-why-not.-If-there-are-any-discrepancies-between-the-effect-size-hypothesis-tests-and-the-sign-tests,-describe-the-discrepancy-and-why-you-think-it-arose.">&#182;</a></h4><ol>
-<li><p>using Bonferroni correction : No, since my evaluation metrics is highly correlated with each other, using Bonferroni correction may be too conservative.</p>
+<li><p>using Bonferroni correction : No</p>
+<p>The decision of launch this experiment or not is decided by the gross conversion mainly, I want the gross conversion decrease significantly while keeping the net conversion untouched. If the net conversion goes down significantly, I will not launch this experiment. If the net conversion goes up significantly, I will be surprised and want to take a further look or maybe design some other experiments to see what's the reason behind it instead of launching this experiment directly.</p>
+<p>So I don't need to use bonferroni correction since the decision making process is only focus on one metric - gross conversion. <br/><br/></p>
 </li>
 <li><p>There is no discrepancies between the effect size hypothesis tests and the sign tests</p>
 </li>
@@ -346,7 +364,9 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="3.-Recommendation">3. Recommendation<a class="anchor-link" href="#3.-Recommendation">&#182;</a></h3>
+<h3 id="3.-Recommendation">3. Recommendation<a class="anchor-link" href="#3.-Recommendation">&#182;</a></h3><p>Basically, I will recommend launch this change based on the result of this experiment, since we see a practically significant decrease in the number of users enroll in the free trial and no statistically significant change in the number of users still enroll (and make payment) after the trial. This means we may improve the overall student experience and improve coaches' capacity to support students who are likely to complete the course.</p>
+<p>However, if we still have time, I will recommend to do this experiment again before launch while using retention as evaluation metric but increase the minimum detectable effect value (say, 0.03). This new significance boundary will make this experiment can be done within 13 days if we put all users into this new experiment. Since we already see this modification will not decrease the net conversion rate significantly, we can boldly put all user into this new experiment and see the result we expected, that is, increasing the number of users remains enrolled after free trial divide by the number of all users who enrolled, more directly.</p>
+
 </div>
 </div>
 </div>
@@ -364,12 +384,28 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Give-a-high-level-description-of-the-follow-up-experiment-you-would-run,-what-your-hypothesis-would-be,-what-metrics-you-would-want-to-measure,-what-your-unit-of-diversion-would-be,-and-your-reasoning-for-these-choices.">Give a high-level description of the follow up experiment you would run, what your hypothesis would be, what metrics you would want to measure, what your unit of diversion would be, and your reasoning for these choices.<a class="anchor-link" href="#Give-a-high-level-description-of-the-follow-up-experiment-you-would-run,-what-your-hypothesis-would-be,-what-metrics-you-would-want-to-measure,-what-your-unit-of-diversion-would-be,-and-your-reasoning-for-these-choices.">&#182;</a></h4><p>I would like to run a same (or similar) experiment while choosing the retention as the evaluation metric and using a different minimum detectable effect value. Since I think the whole point of this experiment is trying to tell user how much effort they need to put into this course and think it will reduce the number of users who drop out in the middle because they have no time, that is, the retention rate! However, in this experiment, using retention as one of the evaluation metric and take 0.01 as the minimum detectable effect value will result in huge amount of pageview requirement and makes the duration of the whole experiment unacceptable. If I using 0.03 as the minimum detectable effect value, we can track the change of retention and get conclusion withing 13 days. Even adding the 14 free trial days (since we can only track those new users who didn't even join the free trial course before), we only need 27 days to finish this experiment and see the result, I think that is acceptable and more resonable.</p>
+<h4 id="Give-a-high-level-description-of-the-follow-up-experiment-you-would-run,-what-your-hypothesis-would-be,-what-metrics-you-would-want-to-measure,-what-your-unit-of-diversion-would-be,-and-your-reasoning-for-these-choices.">Give a high-level description of the follow up experiment you would run, what your hypothesis would be, what metrics you would want to measure, what your unit of diversion would be, and your reasoning for these choices.<a class="anchor-link" href="#Give-a-high-level-description-of-the-follow-up-experiment-you-would-run,-what-your-hypothesis-would-be,-what-metrics-you-would-want-to-measure,-what-your-unit-of-diversion-would-be,-and-your-reasoning-for-these-choices.">&#182;</a></h4><p>In the baseline information, most of the people drop out after clicking "start free trial" and before enrolling the course. The only things happen between this two events is asking users to enter their credit card information and the warning of time-consuming after launching this experiment. I would like to try to move the timing of asking credit card information from the beginning to the end of the free trial, that is, asking after they finish their 14-days free trial. I think this will increase the enrollment rate hugely and increase the payment rate slightly, since some people may feel like to keep going after trying 14 days, and those who don't think this course helpful will not keep paying no matter how.</p>
 <ol>
-<li>Experiment : the same as the original one</li>
-<li>Metrics : retention, that is, number of user-ids to remain enrolled past the 14-day boundary (and thus make at least one payment) divided by number of user-ids to enrolled the free trial.</li>
-<li>Hypothesis : retention will grow at least 0.03 after mentioning the possible time-consuming upfront. (dmin = 0.03)</li>
-<li>Unit of diversion : user-ids </li>
+<li>Hypothesis : moving the timing of asking credit card information from the beginning of the free trial to the end of it will increase the rate of enrollment and payment. <br/><br/> </li>
+<li><p>Metrics :</p>
+<ol>
+<li><p>Invariant metrics : All invariants are set because I want there are equal number of pageviews and clicks in the control and experiment group.</p>
+<ol>
+<li>Number of cookies : The number of unique cookies to view the course overview page.</li>
+<li>Number of clicks : The number of unique cookies to click the "Start free trial" button.</li>
+<li>Click-through-probability : The number of unique cookies to click the "Start free trial" button divided by the number of unique cookies to view the course overview page.    </li>
+</ol>
+</li>
+<li><p>Evaluation metrics : The first evaluation metric will test the increase rate of enrollment, the second will test the increase of payment, My guess is that this change will make a great improvement of enrollment rate and some improvement of payment rate.</p>
+<ol>
+<li>Gross conversion : the number of user-ids to enroll in the free trial divided by the number of unique cookies to click the "Start free trial" button. (dmin = 0.05)</li>
+<li>Net conversion : the number of user-ids to remain enrolled past the 14-day boundary divided by the number of unique cookies to click the "Start free trial" button. (dmin = 0.01) <br/><br/> </li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>Unit of diversion : Since I'm testing the user behavior about clicking "free trial" button and further movements, some user may not have user-id when clicking the button, so I need to use the cookie to be my unit of diversion.</p>
+</li>
 </ol>
 
 </div>
