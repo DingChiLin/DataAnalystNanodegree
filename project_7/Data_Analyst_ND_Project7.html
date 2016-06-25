@@ -203,7 +203,7 @@ div#notebook {
 <p>The goal of this experiment is to find out a way to reducing the number of frustrated students who left the free trial because they didn't have enough time without significantly reducing the number of students to continue past the free trial and eventually complete the course.</p>
 <p>I would like to see the change of retention since it directly relates to the experiment, I want to see a result that "the number of users makes payment divide by the number of users enrolled the free trial" grow in the experiment group. However, the needed pageviews are way too large and may lead to unacceptable experiment duration (more than 100 days). So I can't put it in my evaluation metrics.</p>
 <p>The second choice is the gross conversion since I may see a result that reduces the rate of enrollment after we put the warning before it. This is part of the experiment goal. If I can make the number of enrollment down while keeping the number of payment unchanged, this experiment is worth launching.</p>
-<p>Thirdly, I want to see the change of net conversion since I don't want to see my change reducing the number of users who make payments after free-trial. If the number is down, I wouldn't like to launch this experiment.</p>
+<p>Thirdly, I want the net conversion rate to be untouched or growth significantly, since this means the number of users who make payment, if the number of net conversion decrease significantly, I wouldn't like to launch this experiment.</p>
 <p>Finally, The gross conversion and net conversion require reasonable pageviews to run the experiment, that is, I can finish this experiment within an acceptable time period, so these two metrics are chosen as my final evaluation metrics.</p>
 </li>
 </ol>
@@ -219,7 +219,7 @@ div#notebook {
 <h3 id="2.-Measuring-Standard-Deviation">2. Measuring Standard Deviation<a class="anchor-link" href="#2.-Measuring-Standard-Deviation">&#182;</a></h3><h4 id="List-the-standard-deviation-of-each-of-your-evaluation-metrics.-(These-should-be-the-answers-from-the-&quot;Calculating-standard-deviation&quot;-quiz.)">List the standard deviation of each of your evaluation metrics. (These should be the answers from the "Calculating standard deviation" quiz.)<a class="anchor-link" href="#List-the-standard-deviation-of-each-of-your-evaluation-metrics.-(These-should-be-the-answers-from-the-&quot;Calculating-standard-deviation&quot;-quiz.)">&#182;</a></h4><ol>
 <li>Gross conversion : 0.0202 (400 clicks)</li>
 <li><p>Net conversion : 0.0156 (400 clicks)</p>
-<p>The emperical variabiliy of gross conversion and net conversion are not likely to match with the analytic variability. Since the unit of analysis is cookie but the unit of diversion is user-id for both of them.</p>
+<p>I think the emperical variabiliy of gross conversion and net conversion would match with the analytic variability since the unit of analysis is cookie in each of the metric and the unit of diversion is also cookie.</p>
 </li>
 </ol>
 
@@ -236,9 +236,9 @@ div#notebook {
 <li>Needed Pageviews : 685325</li>
 </ol>
 <h4 id="B-.-Duration-vs.-Exposure">B . Duration vs. Exposure<a class="anchor-link" href="#B-.-Duration-vs.-Exposure">&#182;</a></h4><h4 id="Indicate-what-fraction-of-traffic-you-would-divert-to-this-experiment-and,-given-this,-how-many-days-you-would-need-to-run-the-experiment.-(These-should-be-the-answers-from-the-&quot;Choosing-Duration-and-Exposure&quot;-quiz.)">Indicate what fraction of traffic you would divert to this experiment and, given this, how many days you would need to run the experiment. (These should be the answers from the "Choosing Duration and Exposure" quiz.)<a class="anchor-link" href="#Indicate-what-fraction-of-traffic-you-would-divert-to-this-experiment-and,-given-this,-how-many-days-you-would-need-to-run-the-experiment.-(These-should-be-the-answers-from-the-&quot;Choosing-Duration-and-Exposure&quot;-quiz.)">&#182;</a></h4><ol>
-<li>Fraction of traffic to divert : 0.5</li>
-<li><p>Days need to run the experiment : 35</p>
-<p>The risk of thie experiment is that we may decrease the number of users who make payment after free-trial. So I divert only half of the traffic to experiment, that is, only 25 percents of users will get the warning before enrollment. If it really changes the rate of payment dramatically, it only affects 25 percents of the revenue from this course. In the other hand, I don't want to take too much time to run this experiment, the days needed to take to collect enough pageviews by this fraction of traffic is acceptable (about a month).</p>
+<li>Fraction of traffic to divert : 1</li>
+<li><p>Days need to run the experiment : 18</p>
+<p>I don't think it will hurt the user by warning them the time they need to devote and I don't think this information is sensitive. Maybe we can get some general statistic result from it, I don't think any significant conclusion can be drawn for each individual user. So I will direct all users to this experiment and reduce the days we need to run it.</p>
 </li>
 </ol>
 
@@ -349,8 +349,7 @@ div#notebook {
 </table>
 <h4 id="C.-Summary">C. Summary<a class="anchor-link" href="#C.-Summary">&#182;</a></h4><h4 id="State-whether-you-used-the-Bonferroni-correction,-and-explain-why-or-why-not.-If-there-are-any-discrepancies-between-the-effect-size-hypothesis-tests-and-the-sign-tests,-describe-the-discrepancy-and-why-you-think-it-arose.">State whether you used the Bonferroni correction, and explain why or why not. If there are any discrepancies between the effect size hypothesis tests and the sign tests, describe the discrepancy and why you think it arose.<a class="anchor-link" href="#State-whether-you-used-the-Bonferroni-correction,-and-explain-why-or-why-not.-If-there-are-any-discrepancies-between-the-effect-size-hypothesis-tests-and-the-sign-tests,-describe-the-discrepancy-and-why-you-think-it-arose.">&#182;</a></h4><ol>
 <li><p>using Bonferroni correction : No</p>
-<p>The decision of launch this experiment or not is decided by the gross conversion mainly, I want the gross conversion decrease significantly while keeping the net conversion untouched. If the net conversion goes down significantly, I will not launch this experiment. If the net conversion goes up significantly, I will be surprised and want to take a further look or maybe design some other experiments to see what's the reason behind it instead of launching this experiment directly.</p>
-<p>So I don't need to use bonferroni correction since the decision making process is only focus on one metric - gross conversion. <br/><br/></p>
+<p>The decision of launch this experiment or not is decided by both the gross conversion and net conversion. I will not launch the experiment if only one of the metric fulfill the condition. If only the gross conversion decrease significantly, I need to make sure the net conversion didn't decrease also, on the other hand, if the net conversion  increases significantly, I would like to double check my result by other experiments since it is not what I expect to see. So I don't need to use bonferroni correction. <br/><br/></p>
 </li>
 <li><p>There is no discrepancies between the effect size hypothesis tests and the sign tests</p>
 </li>
@@ -365,7 +364,8 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="3.-Recommendation">3. Recommendation<a class="anchor-link" href="#3.-Recommendation">&#182;</a></h3><p>Basically, I will recommend launch this change based on the result of this experiment, since we see a practically significant decrease in the number of users enroll in the free trial and no statistically significant change in the number of users still enroll (and make payment) after the trial. This means we may improve the overall student experience and improve coaches' capacity to support students who are likely to complete the course.</p>
-<p>However, if we still have time, I will recommend to do this experiment again before launch while using retention as evaluation metric but increase the minimum detectable effect value (say, 0.03). This new significance boundary will make this experiment can be done within 13 days if we put all users into this new experiment. Since we already see this modification will not decrease the net conversion rate significantly, we can boldly put all user into this new experiment and see the result we expected, that is, increasing the number of users remains enrolled after free trial divide by the number of all users who enrolled, more directly.</p>
+<p>Although it is possible that the net conversion goes down a little since the confidence interval of it does include negative value, I think it's acceptable since our hypothesis of this experiment in the first place is to reduce the number of frustrated students without "significantly" reducing the number of students to continue past the free trial and eventually complete the course. This result meet with this hypothesis that we agree with at first, so the experiment can be launched.</p>
+<p>Morever, if we still have time, I will recommend to do this experiment again before launch while using retention as evaluation metric but increase the minimum detectable effect value (say, 0.03). This new significance boundary will make this experiment can be done within 13 days if we put all users into this new experiment. Since we already see this modification will not decrease the net conversion rate significantly, we can boldly put all user into this new experiment and see the result we expected, that is, increasing the number of users remains enrolled after free trial divide by the number of all users who enrolled, more directly.</p>
 
 </div>
 </div>
