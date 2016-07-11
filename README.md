@@ -19,10 +19,19 @@ Using Rstudio to explory the ingredients of white wine and find the
 relationship between each ingredients and the quality of wine.
 
 ### Project 5
-Using scikit-learn library to identify the 
-
+Using scikit-learn library to build a model that can identify
+person-of-interest from financial data and communication data. After
+tuning different models and parameters, the final model can find POI
+well and not gives too many false alarms. (High recall and acceptable
+precision)
 
 ### Project 6
+Using D3.js and dimple.js to build an interactive visualization that
+comparing the learning time and learning achievement of each country.
+The data comes from PISA 2012 original dataset.
 
 ### Project 7
+Constructing an A/B Test experiment and make suggestions to market
+team by the experiment result.
+
 
